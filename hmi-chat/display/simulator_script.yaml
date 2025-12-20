@@ -1,0 +1,6 @@
+- id: time_update
+  then:
+    - lambda:
+        char time_buf[6] = "12:34";
+
+        lv_label_set_text(id(id_lv_lab_time_notif_area), time_buf);

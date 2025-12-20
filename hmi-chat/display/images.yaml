@@ -1,0 +1,8 @@
+- file: 'hmi-chat/feeder-small.png'
+  type: RGB565
+  id: id_img_feeder
+  transparency: alpha_channel
+- file: 'hmi-chat/fountain-small.png'
+  type: RGB565
+  id: id_img_fountain
+  transparency: alpha_channel

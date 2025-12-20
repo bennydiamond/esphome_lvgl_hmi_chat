@@ -1,0 +1,172 @@
+script:
+  - id: id_script_backlight_timeout
+    mode: restart
+    then:
+      - binary_sensor.template.publish:
+          id: id_bin_bl_state
+          state: True
+      - delay: !lambda "return id(id_num_bl_timeout).state * 1000;"
+      - binary_sensor.template.publish:
+          id: id_bin_bl_state
+          state: False
+
+  - id: id_script_reset_dialog_confirm_execute_fountain_filter
+    mode: single
+    then:
+      - homeassistant.event:
+          event: esphome.button_pressed
+          data:
+            message: button_fountain_reset_filter
+      - delay: 75s
+      - if:
+          condition:
+            not:
+              - sensor.in_range:
+                  id: id_sensor_fountain_filter_remaining_days
+                  above: 3
+          then:
+            - lvgl.button.update:
+                id: id_lv_but_fountain_reset_filter
+                clickable: true
+                bg_opa: COVER
+            - lvgl.label.update:
+                id: id_lv_lab_fountain_reset_filter
+                text_opa: COVER
+
+  - id: id_script_reset_dialog_confirm_execute_fountain_clean
+    mode: single
+    then:
+      - homeassistant.event:
+          event: esphome.button_pressed
+          data:
+            message: button_fountain_reset_clean
+      - delay: 75s
+      - if:
+          condition:
+            not:
+              - sensor.in_range:
+                  id: id_sensor_fountain_cleaning_remaining_days
+                  above: 3
+          then:
+            - lvgl.button.update:
+                id: id_lv_but_fountain_reset_clean
+                clickable: true
+                bg_opa: COVER
+            - lvgl.label.update:
+                id: id_lv_lab_fountain_reset_clean
+                text_opa: COVER
+
+  - id: id_script_reset_dialog_confirm_execute_feeder_dessiccant
+    mode: single
+    then:
+      - homeassistant.event:
+          event: esphome.button_pressed
+          data:
+            message: button_feeder_reset_dessiccant
+      - delay: 75s
+      - if:
+          condition:
+            not:
+              - sensor.in_range:
+                  id: id_sensor_feeder_dessi_remain_days
+                  above: 3
+          then:
+            - lvgl.button.update:
+                id: id_lv_but_feeder_reset_dessiccant
+                clickable: true
+                bg_opa: COVER
+            - lvgl.label.update:
+                id: id_lv_lab_feeder_reset_dessiccant
+                text_opa: COVER
+
+  # Generic popup routing script (action button)
+  - id: id_script_popup_action_execute
+    mode: single
+    then:
+      - if:
+          condition:
+            lambda: 'return id(popup_action) == 1;'
+          then:
+            - script.execute: id_script_reset_dialog_confirm_execute_feeder_dessiccant
+      - if:
+          condition:
+            lambda: 'return id(popup_action) == 2;'
+          then:
+            - script.execute: id_script_reset_dialog_confirm_execute_fountain_filter
+      - if:
+          condition:
+            lambda: 'return id(popup_action) == 3;'
+          then:
+            - script.execute: id_script_reset_dialog_confirm_execute_fountain_clean
+      - lvgl.widget.hide: id_lv_popup_generic_overlay
+
+  # Toggle Settings page from top-right button
+  - id: id_script_toggle_settings_page
+    mode: single
+    then:
+      - if:
+          condition:
+            lambda: 'return id(is_on_settings_page);'
+          then:
+            - lvgl.page.show:
+                id: page_home
+                animation: FADE_OUT
+                time: 300ms
+            - lambda: |-
+                id(is_on_settings_page) = false;
+          else:
+            - lvgl.page.show:
+                id: page_settings
+                animation: FADE_IN
+                time: 300ms
+            - lambda: |-
+                id(is_on_settings_page) = true;
+
+  # Show helpers: set labels + action and show the popup
+  - id: id_script_popup_show_feeder_dessiccant
+    mode: single
+    then:
+      - lvgl.label.update:
+          id: id_lv_popup_generic_title
+          text: "${i18n_reset_dessiccant_button}"
+      - lvgl.label.update:
+          id: id_lv_popup_generic_message
+          text: "${i18n_confirm_reset_dessiccant}"
+      - lvgl.label.update:
+          id: id_lv_popup_generic_action_label
+          text: "${i18n_confirm}"
+      - lambda: |-
+          id(popup_action) = 1;
+      - lvgl.widget.show: id_lv_popup_generic_overlay
+
+  - id: id_script_popup_show_fountain_filter
+    mode: single
+    then:
+      - lvgl.label.update:
+          id: id_lv_popup_generic_title
+          text: "${i18n_reset_filter_button}"
+      - lvgl.label.update:
+          id: id_lv_popup_generic_message
+          text: "${i18n_confirm_reset_filter}"
+      - lvgl.label.update:
+          id: id_lv_popup_generic_action_label
+          text: "${i18n_confirm}"
+      - lambda: |-
+          id(popup_action) = 2;
+      - lvgl.widget.show: id_lv_popup_generic_overlay
+
+  - id: id_script_popup_show_fountain_clean
+    mode: single
+    then:
+      - lvgl.label.update:
+          id: id_lv_popup_generic_title
+          text: "${i18n_reset_cleaning_button}"
+      - lvgl.label.update:
+          id: id_lv_popup_generic_message
+          text: "${i18n_confirm_reset_cleaning}"
+      - lvgl.label.update:
+          id: id_lv_popup_generic_action_label
+          text: "${i18n_confirm}"
+      - lambda: |-
+          id(popup_action) = 3;
+      - lvgl.widget.show: id_lv_popup_generic_overlay

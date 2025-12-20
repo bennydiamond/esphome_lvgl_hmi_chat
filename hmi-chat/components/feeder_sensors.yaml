@@ -1,0 +1,339 @@
+sensor:
+  - platform: homeassistant
+    id: id_sensor_feeder_dessi_remain_days
+    entity_id: ${feeder_dessi_remain_days_entity}
+    on_value:
+      then:
+        - if:
+            condition:
+              - sensor.in_range:
+                  id: id_sensor_feeder_dessi_remain_days
+                  above: 3
+            then:
+              - lvgl.button.update:
+                  id: id_lv_but_feeder_reset_dessiccant
+                  clickable: false
+                  #bg_color: color_dark_gray
+                  bg_opa: 10%
+              - lvgl.label.update:
+                  id: id_lv_lab_feeder_reset_dessiccant
+                  text_opa: 40%
+            else:
+              - lvgl.button.update:
+                  id: id_lv_but_feeder_reset_dessiccant
+                  clickable: true
+                  #bg_color: color_bulb_blue
+                  bg_opa: COVER
+              - lvgl.label.update:
+                  id: id_lv_lab_feeder_reset_dessiccant
+                  text_opa: COVER
+        - lvgl.button.update:
+            id: id_lv_but_feeder_reset_dessiccant
+            bg_color: !lambda |-
+              if(x > 3)
+                return id(color_bulb_blue);
+              else if (x > 2)
+                return id(color_green);
+              else if (x > 0)
+                return id(color_yellow);
+              else
+                return id(color_red);
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_dessiccant_days_left
+            text: !lambda |-
+              static char out[20];
+
+              if(x < -1)
+                snprintf(out, sizeof(out), "%d jours en retard", (int)x);
+              else if(x == -1)
+                snprintf(out, sizeof(out), "%d jour en retard", (int)x);
+              else if(x <= 1)
+                snprintf(out, sizeof(out), "%d jour restant", (int)x);
+              else
+                snprintf(out, sizeof(out), "%d jours restants", (int)x);
+              return out;
+            text_color: !lambda |-
+              if(x > 2)
+                return id(color_green);
+              else if (x > 0)
+                return id(color_yellow);
+              else
+                return id(color_red);
+
+
+
+  - platform: homeassistant
+    id: id_sensor_feeder_wifi_signal
+    entity_id: ${feeder_wifi_signal_entity}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_wifi_icon
+            text_color: !lambda |-
+              if (x < 0) {
+                return lv_color_hex(0x00FF00);
+              }
+              return lv_color_hex(0x333333);
+            text: !lambda |-
+              if (x <= -80) {
+                return "${wifi_25}";
+              } else if (x > -80 && x <= -70) {
+                return "${wifi_50}";
+              } else if (x > -70 && x <= -60) {
+                return "${wifi_75}";
+              } else if (x > -60) {
+                return "${wifi_100}";
+              }
+              return "${wifi_100}";
+
+text_sensor:
+  - platform: homeassistant
+    id: id_text_sensor_feeder_device_sn
+    entity_id: ${feeder_device_sn_entity}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_device_sn
+            text: !lambda |-
+              std::string prefix = "SN: ";
+              return (prefix + x).c_str();
+            text_color: color_white
+  - platform: homeassistant
+    id: id_text_sensor_feeder_mac_address
+    entity_id: ${feeder_mac_address_entity}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_mac_address
+            text: !lambda |-
+              std::string prefix = "MAC: ";
+              return (prefix + x).c_str();
+            text_color: color_white
+  - platform: homeassistant
+    id: id_text_sensor_feeder_wifi_ssid
+    entity_id: ${feeder_wifi_ssid_entity}
+    on_value:
+      then:
+        - if:
+            condition:
+              - binary_sensor.is_on: id_binary_sensor_feeder_wifi_connected
+            then:
+              - lvgl.label.update:
+                  id: id_lv_lab_feeder_wifi_ssid
+                  text: !lambda |-
+                    std::string prefix = "Wi-Fi: ";
+                    return (prefix + x).c_str();
+                  text_color: color_white
+            else:
+              - lvgl.label.update:
+                  id: id_lv_lab_feeder_wifi_ssid
+                  text: "${i18n_wifi_disconnected}"
+                  text_color: color_white
+  - platform: homeassistant
+    id: id_text_sensor_feeder_manual_feed_quantity
+    entity_id: ${feeder_manual_feed_quantity_entity}
+    # clipping size seems to mess up the string
+#    filters:
+#      - lambda: |-
+#            const size_t max_length = 8;
+#            x.resize(max_length);
+#            return x;
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_manual_feed_portion_display
+            text: !lambda return x.c_str();
+        - lvgl.roller.update:
+            id: id_lv_roller_feeder_manual_quantity
+            selected_text: !lambda return x.c_str();
+            animated: true
+  - platform: homeassistant
+    id: id_text_sensor_feeder_issue_list
+    entity_id: ${feeder_issue_list_entity}
+    filters:
+      - lambda: |-
+            const size_t max_length = 300;
+            if(x != "OK")
+            {
+              std::string str = x;
+              if (str.length() > max_length) {
+                return str.substr(0, max_length);
+              }
+              return str;
+            }
+            else
+            {
+              return std::string("");
+            }
+
+  - platform: homeassistant
+    id: id_text_sensor_feeder_last_feed_time
+    entity_id: ${feeder_last_feed_time_entity}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_status_last_feed_time
+            text: !lambda |-
+              std::string prefix = "Dernière distrib.: ";
+              return (prefix + x).c_str();
+            text_color: color_white
+
+  - platform: homeassistant
+    id: id_text_sensor_feeder_next_feed_time
+    entity_id: ${feeder_next_feed_time_entity}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_status_next_feed_time
+            text: !lambda |-
+              std::string prefix = "Prochaine distrib.: ";
+              return (prefix + x).c_str();
+            text_color: color_white
+binary_sensor:
+  - platform: homeassistant
+    id: id_binary_sensor_feeder_batt_status
+    entity_id: ${feeder_batt_status_entity}
+    trigger_on_initial_state: true
+    on_press:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_status_battery
+            text: "${i18n_battery_status_low}"
+            text_color: color_red
+    on_release:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_status_battery
+            text: "${i18n_battery_status_ok}"
+            text_color: color_green
+  - platform: homeassistant
+    id: id_binary_sensor_feeder_dispenser_status
+    entity_id: ${feeder_dispenser_status_entity}
+    trigger_on_initial_state: true
+    on_press:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_status_dispenser
+            text: "${i18n_dispenser_status_problem}"
+            text_color: color_red
+    on_release:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_status_dispenser
+            text: "${i18n_dispenser_status_ok}"
+            text_color: color_green
+  - platform: homeassistant
+    id: id_binary_sensor_feeder_food_status
+    entity_id: ${feeder_food_status_entity}
+    trigger_on_initial_state: true
+    on_press:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_status_food
+            text: "${i18n_food_status_low_problem}"
+            text_color: color_red
+        - lvgl.widget.show: id_lv_but_food_alert # Notification button
+    on_release:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_status_food
+            text: "${i18n_food_status_ok}"
+            text_color: color_green
+        - lvgl.widget.hide: id_lv_but_food_alert # Notification button
+  - platform: homeassistant
+    id: id_binary_sensor_feeder_lid_status
+    entity_id: ${feeder_lid_status_entity}
+    trigger_on_initial_state: true
+    on_press:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_status_lid
+            text: "${i18n_lid_status_problem}"
+            text_color: color_red
+    on_release:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_status_lid
+            text: "${i18n_lid_status_ok}"
+            text_color: color_green
+  - platform: homeassistant
+    id: id_binary_sensor_feeder_feeding_plan_active
+    entity_id: ${feeder_feeding_plan_active_entity}
+    trigger_on_initial_state: true
+    on_press:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_feeding_plan_status
+            text: "${i18n_feeding_plan_active}"
+            text_color: color_green
+    on_release:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_feeding_plan_status
+            text: "${i18n_feeding_plan_inactive}"
+            text_color: color_red
+
+  - platform: homeassistant
+    id: id_binary_sensor_feeder_general_issue
+    entity_id: ${feeder_general_issue_entity}
+    on_release:
+      then:
+        - lvgl.button.update:
+            id: id_lv_but_feeder_card
+            shadow_color: color_gray
+  - platform: homeassistant
+    id: id_binary_sensor_feeder_wifi_connected
+    entity_id: ${feeder_wifi_connected_entity}
+    on_release:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_wifi_icon
+            text: "\U000F092F"
+            text_color: color_gray
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_wifi_ssid
+            text: "${i18n_wifi_disconnected}"
+            text_color: color_white
+    on_press:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_wifi_icon
+            text_color: color_white
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_wifi_ssid
+            text: !lambda |-
+              std::string prefix = "Wi-Fi: ";
+              std::string ssid = id(id_text_sensor_feeder_wifi_ssid).state;
+              return (prefix + ssid).c_str();
+            text_color: color_white
+
+globals:
+  - id: id_global_bool_feeder_problems_blinker
+    type: bool
+    initial_value: 'false'
+    restore_value: false
+
+interval:
+  - interval: 1200ms
+    then:
+      - if:
+          condition:
+            binary_sensor.is_on: id_binary_sensor_feeder_general_issue
+          then:
+            - if:
+                condition:
+                  - lambda: return id(id_global_bool_feeder_problems_blinker) == true;
+                then:
+                  - globals.set:
+                      id: id_global_bool_feeder_problems_blinker
+                      value: 'false'
+                  - lvgl.button.update:
+                      id: id_lv_but_feeder_card
+                      shadow_color: color_red
+                else:
+                  - globals.set:
+                      id: id_global_bool_feeder_problems_blinker
+                      value: 'true'
+                  - lvgl.button.update:
+                      id: id_lv_but_feeder_card
+                      shadow_color: color_gray

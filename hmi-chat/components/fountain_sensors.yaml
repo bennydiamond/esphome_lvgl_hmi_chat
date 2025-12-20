@@ -1,0 +1,378 @@
+sensor:
+  - platform: homeassistant
+    id: id_sensor_fountain_clean_cycle_days
+    entity_id: ${fountain_clean_cycle_number_entity}
+  - platform: homeassistant
+    id: id_sensor_fountain_filter_cycle_days
+    entity_id: ${fountain_filter_cycle_number_entity}
+  - platform: homeassistant
+    id: id_sensor_fountain_low_threshold_ha
+    entity_id: ${fountain_low_threshold_input_number_entity}
+    on_value:
+      then:
+        - globals.set:
+            id: id_global_fountain_low_threshold
+            value: !lambda return x;
+        - lvgl.bar.update:
+            id: id_lv_bar_fountain_water_level
+            bg_color: !lambda |-
+              float low = id(id_global_fountain_low_threshold);
+              float warn = low + ${threshold_water_warn_offset_percent};
+              if (id(id_sensor_fountain_water_level_percent).state < low)
+                return id(color_red);
+              else if (id(id_sensor_fountain_water_level_percent).state < warn)
+                return id(color_yellow);
+              else
+                return id(color_green);
+            indicator:
+              bg_color: !lambda |-
+                float low = id(id_global_fountain_low_threshold);
+                float warn = low + ${threshold_water_warn_offset_percent};
+                if (id(id_sensor_fountain_water_level_percent).state < low)
+                  return id(color_red);
+                else if (id(id_sensor_fountain_water_level_percent).state < warn)
+                  return id(color_yellow);
+                else
+                  return id(color_green);
+  - platform: homeassistant
+    id: id_sensor_fountain_cleaning_remaining_days
+    entity_id: ${fountain_clean_remaining_days_entity}
+    on_value:
+      then:
+        - if:
+            condition:
+              - sensor.in_range:
+                  id: id_sensor_fountain_cleaning_remaining_days
+                  above: 3
+            then:
+              - lvgl.button.update:
+                  id: id_lv_but_fountain_reset_clean
+                  clickable: false
+                  #bg_color: color_dark_gray
+                  bg_opa: 10%
+              - lvgl.label.update:
+                  id: id_lv_lab_fountain_reset_clean
+                  text_opa: 40%
+            else:
+              - lvgl.button.update:
+                  id: id_lv_but_fountain_reset_clean
+                  clickable: true
+                  #bg_color: color_bulb_blue
+                  bg_opa: COVER
+              - lvgl.label.update:
+                  id: id_lv_lab_fountain_reset_clean
+                  text_opa: COVER
+        - lvgl.button.update:
+            id: id_lv_but_fountain_reset_clean
+            bg_color: !lambda |-
+              if(x > 3)
+                return id(color_bulb_blue);
+              else if (x > 2)
+                return id(color_green);
+              else if (x > 0)
+                return id(color_yellow);
+              else
+                return id(color_red);
+        - lvgl.label.update:
+            id: id_lab_fountain_clean_remaining_days
+            text: !lambda |-
+              static char out[12];
+              if(x <= 1)
+                snprintf(out, sizeof(out), "%d jour", (int)x);
+              else
+                snprintf(out, sizeof(out), "%d jours", (int)x);
+              return out;
+            text_color: !lambda |-
+              if(x > 2)
+                return id(color_green);
+              else if (x > 0)
+                return id(color_yellow);
+              else
+                return id(color_red);
+  - platform: homeassistant
+    id: id_sensor_fountain_filter_remaining_days
+    entity_id: ${fountain_filter_remaining_days_entity}
+    on_value:
+      then:
+        - if:
+            condition:
+              - sensor.in_range:
+                  id: id_sensor_fountain_filter_remaining_days
+                  above: 3
+            then:
+              - lvgl.button.update:
+                  id: id_lv_but_fountain_reset_filter
+                  clickable: false
+                  #bg_color: color_dark_gray
+                  bg_opa: 10%
+              - lvgl.label.update:
+                  id: id_lv_lab_fountain_reset_filter
+                  text_opa: 40%
+            else:
+              - lvgl.button.update:
+                  id: id_lv_but_fountain_reset_filter
+                  clickable: true
+                  #bg_color: color_bulb_blue
+                  bg_opa: COVER
+              - lvgl.label.update:
+                  id: id_lv_lab_fountain_reset_filter
+                  text_opa: COVER
+        - lvgl.button.update:
+            id: id_lv_but_fountain_reset_filter
+            bg_color: !lambda |-
+              if(x > 3)
+                return id(color_bulb_blue);
+              else if (x > 2)
+                return id(color_green);
+              else if (x > 0)
+                return id(color_yellow);
+              else
+                return id(color_red);
+        - lvgl.label.update:
+            id: id_lab_fountain_filter_remaining_days
+            text: !lambda |-
+              static char out[12];
+              if(x <= 1)
+                snprintf(out, sizeof(out), "%d jour", (int)x);
+              else
+                snprintf(out, sizeof(out), "%d jours", (int)x);
+              return out;
+            text_color: !lambda |-
+              if(x > 2)
+                return id(color_green);
+              else if (x > 0)
+                return id(color_yellow);
+              else
+                return id(color_red);
+  - platform: homeassistant
+    id: id_sensor_fountain_water_level_percent
+    entity_id: ${fountain_water_level_percent_entity}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_fountain_water_level_percent
+            text:
+              format: "%.0f%%"
+              args: [ 'x' ]
+        - lvgl.bar.update:
+            id: id_lv_bar_fountain_water_level
+            value: !lambda return (int)x;
+            bg_color: !lambda |-
+              float low = id(id_global_fountain_low_threshold);
+              float warn = low + ${threshold_water_warn_offset_percent};
+              if (x < low)
+                return id(color_red);
+              else if (x < warn)
+                return id(color_yellow);
+              else
+                return id(color_green);
+            indicator:
+              bg_color: !lambda |-
+                float low = id(id_global_fountain_low_threshold);
+                float warn = low + ${threshold_water_warn_offset_percent};
+                if (x < low)
+                  return id(color_red);
+                else if (x < warn)
+                  return id(color_yellow);
+                else
+                  return id(color_green);
+  - platform: homeassistant
+    id: id_sensor_fountain_water_consumption_today
+    entity_id: ${fountain_water_consumption_today_entity}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_fountain_today_consumption
+            text: !lambda |-
+              static char out[40];
+              snprintf(out, sizeof(out), "Consommation aujourd'hui: %.0f mL", x);
+              return out;
+            text_color: color_white
+  - platform: homeassistant
+    id: id_sensor_fountain_water_consumption_yesterday
+    entity_id: ${fountain_water_consumption_yesterday_entity}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_fountain_yesterday_consumption
+            text: !lambda |-
+              static char out[32];
+              snprintf(out, sizeof(out), "Consommation hier: %.0f mL", x);
+              return out;
+            text_color: color_white
+  - platform: homeassistant
+    id: id_sensor_fountain_drinks_today
+    entity_id: ${fountain_drinks_today_entity}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_fountain_today_drinks
+            text: !lambda |-
+              static char out[28];
+              snprintf(out, sizeof(out), "Aujourd'hui: %.0f fois bu", x);
+              return out;
+            text_color: color_white
+  - platform: homeassistant
+    id: id_sensor_fountain_drinks_yesterday
+    entity_id: ${fountain_drinks_yesterday_entity}
+    on_value:
+      then:
+        - lvgl.label.update:
+              id: id_lv_lab_fountain_yesterday_drinks
+              text: !lambda |-
+                static char out[24];
+                snprintf(out, sizeof(out), "Hier: %.0f fois bu", x);
+                return out;
+              text_color: color_white
+  - platform: homeassistant
+    id: id_sensor_fountain_wifi_signal
+    entity_id: ${fountain_wifi_signal_entity}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_fountain_wifi_icon
+            text_color: !lambda |-
+              if (x < 0) {
+                return lv_color_hex(0x00FF00);
+              }
+              return lv_color_hex(0x333333);
+            text: !lambda |-
+              if (x <= -80) {
+                return "${wifi_25}";
+              } else if (x > -80 && x <= -70) {
+                return "${wifi_50}";
+              } else if (x > -70 && x <= -60) {
+                return "${wifi_75}";
+              } else if (x > -60) {
+                return "${wifi_100}";
+              }
+              return "${wifi_100}";
+
+text_sensor:
+  - platform: homeassistant
+    id: id_text_sensor_fountain_device_sn
+    entity_id: ${fountain_device_sn_entity}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_fountain_device_sn
+            text: !lambda |-
+              std::string prefix = "SN: ";
+              return (prefix + x).c_str();
+            text_color: color_white
+  - platform: homeassistant
+    id: id_text_sensor_fountain_mac_address
+    entity_id: ${fountain_mac_address_entity}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_fountain_mac_address
+            text: !lambda |-
+              std::string prefix = "MAC: ";
+              return (prefix + x).c_str();
+            text_color: color_white
+  - platform: homeassistant
+    id: id_text_sensor_fountain_wifi_ssid
+    entity_id: ${fountain_wifi_ssid_entity}
+    on_value:
+      then:
+        - if:
+            condition:
+              - binary_sensor.is_on: id_binary_sensor_fountain_wifi_connected
+            then:
+              - lvgl.label.update:
+                  id: id_lv_lab_fountain_wifi_ssid
+                  text: !lambda |-
+                    std::string prefix = "Wi-Fi: ";
+                    return (prefix + x).c_str();
+                  text_color: color_white
+            else:
+              - lvgl.label.update:
+                  id: id_lv_lab_fountain_wifi_ssid
+                  text: "${i18n_wifi_disconnected}"
+                  text_color: color_white
+  - platform: homeassistant
+    id: id_text_sensor_fountain_water_dispensing_mode
+    entity_id: ${fountain_dispensing_mode_select_entity}
+    on_value:
+      then:
+        - lvgl.dropdown.update:
+            id: id_lv_dropdown_fountain_dispensing_mode
+            selected_index: !lambda |-
+              if (x == "Flowing Water (Constant)") {
+                return 0;
+              } else if (x == "Intermittent Water (Scheduled)") {
+                return 1;
+              } else {
+                return 0;
+              }
+
+binary_sensor:
+  - platform: homeassistant
+    id: id_binary_sensor_fountain_general_issue
+    entity_id: ${fountain_general_issue_entity}
+    on_release:
+      then:
+        - lvgl.button.update:
+            id: id_lv_but_fountain_card
+            shadow_color: color_gray
+  - platform: homeassistant
+    id: id_binary_sensor_fountain_wifi_connected
+    entity_id: ${fountain_wifi_connected_entity}
+    on_release:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_fountain_wifi_icon
+            text: "\U000F092F"
+            text_color: color_gray
+        - lvgl.label.update:
+            id: id_lv_lab_fountain_wifi_ssid
+            text: "${i18n_wifi_disconnected}"
+            text_color: color_white
+    on_press:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_fountain_wifi_icon
+            text_color: color_white
+        - lvgl.label.update:
+            id: id_lv_lab_fountain_wifi_ssid
+            text: !lambda |-
+              std::string prefix = "Wi-Fi: ";
+              std::string ssid = id(id_text_sensor_fountain_wifi_ssid).state;
+              return (prefix + ssid).c_str();
+            text_color: color_white
+
+globals:
+  - id: id_global_fountain_low_threshold
+    type: float
+    initial_value: ${threshold_water_low_percent}
+    restore_value: false
+  - id: id_global_bool_fountain_problems_blinker
+    type: bool
+    initial_value: 'false'
+    restore_value: false
+
+interval:
+  - interval: 1200ms
+    then:
+      - if:
+          condition:
+            binary_sensor.is_on: id_binary_sensor_fountain_general_issue
+          then:
+            - if:
+                condition:
+                  - lambda: return id(id_global_bool_fountain_problems_blinker) == true;
+                then:
+                  - globals.set:
+                      id: id_global_bool_fountain_problems_blinker
+                      value: 'false'
+                  - lvgl.button.update:
+                      id: id_lv_but_fountain_card
+                      shadow_color: color_red
+                else:
+                  - globals.set:
+                      id: id_global_bool_fountain_problems_blinker
+                      value: 'true'
+                  - lvgl.button.update:
+                      id: id_lv_but_fountain_card
+                      shadow_color: color_gray

@@ -1,0 +1,40 @@
+
+
+lvgl:
+  pages:
+    - id: !extend page_home
+      widgets:
+        - obj:
+            y: 43
+            width: 320
+            height: 437
+            align: TOP_LEFT
+            pad_all: 0
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            layout:
+              type: GRID
+              grid_columns: [100%]
+              grid_rows: [FR(1), FR(1)]
+              pad_row: 10
+            widgets:
+              - button:
+                  id: id_lv_but_feeder_card
+                  on_press:
+                    then:
+                      - lvgl.page.show:
+                          id: page_feeder
+                          animation: FADE_IN
+                          time: 300ms
+                  <<: !include { file: feeder_card_content.yaml }
+              - button:
+                  id: id_lv_but_fountain_card
+                  on_press:
+                    then:
+                      - lvgl.page.show:
+                          id: page_fountain
+                          animation: FADE_IN
+                          time: 300ms
+                  <<: !include { file: fountain_card_content.yaml }
+
+              

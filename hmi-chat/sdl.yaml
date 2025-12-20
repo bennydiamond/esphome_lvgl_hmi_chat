@@ -1,0 +1,89 @@
+esphome:
+  name: sdl-hmi-chat
+  min_version: 2025.11.0
+  on_boot:
+    - script.execute: time_update
+
+host:
+  mac_address: "de:ad:be:ef:fe:ed"
+
+logger:
+  level: DEBUG
+
+api:
+
+http_request:
+
+text_sensor:
+  - platform: template
+    id: id_sntp_time
+  - platform: template
+    id: id_text_wifi_ssid
+    lambda: |-
+      return {"Fake SSID"};
+  - platform: template
+    id: id_text_ip_address
+    lambda: |-
+      return {"2553.255.255.255"};
+
+
+display:
+  - platform: sdl
+    update_interval: never
+    #show_test_card: true
+    dimensions:
+      width: 320
+      height: 480
+    auto_clear_enabled: false 
+
+touchscreen:
+  platform: sdl
+  transform:
+    mirror_x: false
+    mirror_y: false
+  # on_touch:
+  #   - logger.log:
+  #         format: Touch at (%d, %d)
+  #         args: [touch.x, touch.y]
+  #   - lambda: |-
+  #         ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%0d",
+  #             touch.x,
+  #             touch.y,
+  #             touch.x_raw,
+  #             touch.y_raw
+  #             );
+
+script: !include display/simulator_script.yaml
+
+button:
+  - platform: restart
+    name: "Device Restart (fake safe mode)"
+    id: id_button_safe_mode
+    internal: True
+  - platform: restart
+    name: "Device Restart"
+    id: id_button_restart
+    internal: True
+
+output:
+  - platform: template
+    id: fake_backlight_output
+    type: float
+    write_action:
+      - lambda: |-
+          ESP_LOGD("fake_backlight", "Fake brightness level: %.2f", state);
+
+light:
+  - id: id_light_backlight_brightness
+    platform: monochromatic
+    output: fake_backlight_output
+    name: Display Backlight
+    restore_mode: ALWAYS_ON
+    default_transition_length: 1s
+    gamma_correct: 2.8
+
+lvgl:
+  widgets:
+    - led:
+        id: fake_led_id
+        hidden: true

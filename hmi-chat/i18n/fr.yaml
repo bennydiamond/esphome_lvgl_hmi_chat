@@ -1,0 +1,65 @@
+# French UI strings for HMI Chat
+# Keys prefixed with i18n_ for clarity
+
+# Common
+i18n_wifi_disconnected: "Wi-Fi: Déconnecté"
+
+# Placeholders
+i18n_sn_placeholder: "SN: —"
+i18n_wifi_placeholder: "Wi-Fi: —"
+i18n_mac_placeholder: "MAC: —"
+
+# Feeder statuses
+i18n_battery_status_placeholder: "État batterie: —"
+i18n_battery_status_low: "État batterie: faible"
+i18n_battery_status_ok: "État batterie: OK"
+i18n_dispenser_status_placeholder: "État distributeur: —"
+i18n_dispenser_status_problem: "État distributeur: problème"
+i18n_dispenser_status_ok: "État distributeur: OK"
+i18n_food_status_placeholder: "Niveau nourriture: —"
+i18n_food_status_low_problem: "Niveau nourriture: Bas/Problème"
+i18n_food_status_ok: "Niveau nourriture: OK"
+i18n_lid_status_placeholder: "État couvercle: —"
+i18n_lid_status_problem: "État couvercle: problème"
+i18n_lid_status_ok: "État couvercle: OK"
+i18n_feeding_plan_placeholder: "Distribution automatique: —"
+i18n_feeding_plan_active: "Distribution automatique: Actif"
+i18n_feeding_plan_inactive: "Distribution automatique: Inactif"
+
+# Feed time labels
+i18n_last_feed_placeholder: "Dernière distribution: —"
+i18n_next_feed_placeholder: "Prochaine distribution: —"
+
+# Fountain page
+i18n_cons_today_placeholder: "Consommation aujourd'hui: — mL"
+i18n_cons_yesterday_placeholder: "Consommation hier: — mL"
+i18n_drinks_today_placeholder: "Aujourd'hui: — fois bu"
+i18n_drinks_yesterday_placeholder: "Hier: — fois bu"
+i18n_pump_mode_label: "Fonctionnement de la pompe:"
+
+# Page home card texts
+i18n_dessiccant_label: "Dessiccant"
+i18n_filter_label: "Filtre:"
+i18n_cleaning_label: "Nettoyage:"
+i18n_reset_dessiccant_button: "Réinit.\nDessiccant"
+i18n_reset_filter_button: "Réinit.\nFiltre"
+i18n_reset_cleaning_button: "Réinit.\nNettoyage"
+
+# Popups
+i18n_confirm: "Confirmer"
+i18n_cancel: "Annuler"
+i18n_notification_problem_title: "Notification/Problème"
+i18n_notification_problem_text: "Vérifier la fontaine ou la mangeoire."
+i18n_close: "Fermer"
+i18n_confirm_reset_dessiccant: "Confirmer la réinitialisation du dessiccant?"
+i18n_confirm_reset_filter: "Confirmer la réinitialisation du filtre?"
+i18n_confirm_reset_cleaning: "Confirmer la réinitialisation du nettoyage?"
+
+# Settings
+i18n_brightness_label: "Luminosité"
+i18n_restart: "Redémarrer"
+i18n_restart_safe: "Redémarrer\n(Safe Mode)"
+i18n_wifi_info: "Info Wi-Fi"
+
+# Misc
+i18n_close_short: "X"

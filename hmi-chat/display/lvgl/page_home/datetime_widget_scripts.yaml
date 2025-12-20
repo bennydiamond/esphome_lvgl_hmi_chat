@@ -1,0 +1,8 @@
+- id: time_update
+  then:
+    - lambda: |-
+        char time_buf[6];
+        auto now = id(id_sntp_time).now();
+        snprintf(time_buf, sizeof(time_buf), "%02d:%02d", now.hour, now.minute);
+
+        lv_label_set_text(id(id_lv_lab_time_notif_area), time_buf);

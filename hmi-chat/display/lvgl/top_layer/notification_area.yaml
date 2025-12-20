@@ -1,0 +1,158 @@
+obj:
+  x: 0
+  y: 0
+  align: TOP_LEFT
+  height: 43
+  width: 320
+  radius: 0
+  bg_opa: TRANSP
+  border_width: 0
+  pad_all: 0
+  widgets:
+    - line:
+          points:
+            - 8, 41
+            - 312, 41
+          line_width: 2
+          line_color: color_dark_gray
+          line_rounded: true
+        
+    - obj:
+        align: TOP_RIGHT
+        width: 152
+        height: 40
+        pad_all: 0
+        bg_opa: TRANSP
+        border_opa: TRANSP
+        pad_right: 1
+        layout: # enable the FLEX layout for the children widgets
+            type: FLEX
+            flex_flow: ROW  # the order of the widgets starts top left
+            flex_align_main : END
+            pad_column: 3
+        widgets:
+            # Time display. Must be at the start to avoid shifting when other icons appear/disappear
+            # Only shown when not on home page
+            - label:
+                id: id_lv_lab_time_notif_area
+                align: CENTER
+                text_color: color_white
+                text_font: lato_30
+                hidden: false
+            # Home Assistant status
+            - label:
+                id: id_lv_lab_ha_status
+                align: TOP_RIGHT
+                text: "${ha}"
+                text_color: color_dark_gray
+                text_font: mdi_icons_32
+            # Wi-Fi status
+            - label:
+                id: id_lv_lab_wifi_status
+                align: TOP_RIGHT
+                text: "${wifi_100}"
+                text_color: color_dark_gray
+                text_font: mdi_icons_32
+    # must be placed last atop other widgets to be clickable
+    - button:
+        id: id_lv_but_settings_toggle
+        align: TOP_RIGHT
+        x: 0
+        y: 0
+        width: 70
+        height: 36
+        pad_all: 0
+        bg_opa: TRANSP
+        border_opa: TRANSP
+        border_width: 0
+        border_color: color_white
+        shadow_width: 0
+        on_press:
+            then:
+                - script.execute: id_script_toggle_settings_page
+
+
+    - obj:
+          align: TOP_LEFT
+          width: 160
+          height: 40
+          x: 0
+          y: 0
+          pad_all: 0
+          bg_opa: TRANSP
+          border_opa: TRANSP
+          pad_left: 1
+          layout: # enable the FLEX layout for the children widgets
+            type: FLEX
+            flex_flow: ROW  # the order of the widgets starts top left
+            flex_align_main : START # they sould be centered
+            pad_column: 3
+          widgets:
+            - button:
+                id: id_lv_but_catstuff_problem
+                pad_all: 0
+                height: 35
+                width: 33
+                border_side: NONE
+                bg_opa: TRANSP
+                shadow_width: 0
+                hidden: True
+                widgets:
+                - label:
+                    id: id_lv_lab_catstuff_problem
+                    align: CENTER
+                    text: "${cat}"
+                    text_color: color_red
+                    text_font: mdi_icons_32
+                on_short_click:
+                    then:
+                        - lvgl.widget.show: id_lv_popup_warnings_overlay
+                on_long_press:
+                    then:
+                        - lvgl.widget.show: id_lv_popup_warnings_overlay
+            # Fountain low water alert (button opens warnings overlay)
+            - button:
+                id: id_lv_but_water_alert
+                pad_all: 0
+                height: 35
+                width: 33
+                border_side: NONE
+                bg_opa: TRANSP
+                shadow_width: 0
+                hidden: true
+                widgets:
+                    - label:
+                        id: id_lv_lab_water_alert
+                        align: CENTER
+                        text: "${water_alert}"
+                        text_color: color_red
+                        text_font: mdi_icons_32
+                on_short_click:
+                    then:
+                        - lvgl.widget.show: id_lv_popup_warnings_overlay
+                on_long_press:
+                    then:
+                        - lvgl.widget.show: id_lv_popup_warnings_overlay
+            # Feeder low food alert (button opens warnings overlay)
+            - button:
+                id: id_lv_but_food_alert
+                pad_all: 0
+                height: 35
+                width: 33
+                border_side: NONE
+                bg_opa: TRANSP
+                shadow_width: 0
+                hidden: true
+                widgets:
+                    - label:
+                        id: id_lv_lab_food_alert
+                        align: CENTER
+                        text: "${food_drumstick}"
+                        text_color: color_orange
+                        text_font: mdi_icons_32
+                on_short_click:
+                    then:
+                        - lvgl.widget.show: id_lv_popup_warnings_overlay
+                on_long_press:
+                    then:
+                        - lvgl.widget.show: id_lv_popup_warnings_overlay

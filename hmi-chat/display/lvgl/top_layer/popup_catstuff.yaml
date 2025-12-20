@@ -1,0 +1,68 @@
+# Catstuff problem popup overlay with single close button
+obj:
+  id: id_lv_popup_warnings_overlay
+  align: CENTER
+  width: 320
+  height: 480
+  bg_color: color_black
+  bg_opa: 30%
+  border_opa: TRANSP
+  pad_all: 0
+  clickable: true
+  # Hide by default; scripts can show when needed
+  hidden: true
+  widgets:
+    - obj:
+        align: CENTER
+        width: 280
+        height: 240
+        bg_color: color_dark_gray
+        bg_opa: COVER
+        border_color: color_white
+        border_width: 2
+        border_opa: COVER
+        radius: 12
+        clip_corner: true
+        pad_all: 10
+        layout:
+          type: GRID
+          grid_columns: [100%]
+          grid_rows: [FR(2), FR(6), FR(2)]
+          pad_row: 8
+        widgets:
+          - label:
+              id: id_lv_popup_catstuff_title
+              align: TOP_MID
+              text_align: CENTER
+              text_decor: UNDERLINE
+              text_font: lato_24
+              text_color: color_white
+              bg_opa: TRANSP
+              text: "${i18n_notification_problem_title}"
+          - label:
+              id: id_lv_popup_catstuff_message
+              align: CENTER
+              text_align: CENTER
+              long_mode: WRAP
+              text_font: lato_18
+              text_color: color_white
+              bg_opa: TRANSP
+              text: "${i18n_notification_problem_text}"
+          - button:
+              id: id_lv_popup_catstuff_close
+              align: CENTER
+              width: 100%
+              shadow_opa: COVER
+              shadow_color: color_gray
+              shadow_width: 6
+              shadow_spread: 1
+              on_press:
+                then:
+                  - lvgl.widget.hide: id_lv_popup_warnings_overlay
+              widgets:
+                - label:
+                    align: CENTER
+                    text_align: CENTER
+                    text_font: lato_18
+                    text_color: color_white
+                    text: "${i18n_close}"

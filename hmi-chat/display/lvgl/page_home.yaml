@@ -1,0 +1,11 @@
+packages:
+  main_tileview: !include page_home/main_tileview.yaml
+
+lvgl:
+  pages:
+    - id: page_home
+      skip: False
+      bg_color: color_black
+      scrollable: False
+      widgets:
+

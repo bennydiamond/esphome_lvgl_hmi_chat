@@ -1,0 +1,103 @@
+obj:
+  id: id_lv_popup_generic_overlay
+  x: 0
+  y: 0
+  align: TOP_LEFT
+  width: 320
+  height: 480
+  hidden: True
+  pad_all: 0
+  radius: 0
+  bg_color: color_black
+  bg_opa: 65%
+  border_opa: TRANSP
+  shadow_width: 0
+  widgets:
+    - obj:
+        align: CENTER
+        width: 280
+        height: 320
+        pad_all: 16
+        radius: 16
+        bg_color: color_dark_gray
+        bg_opa: COVER
+        border_color: color_dark_gray
+        border_width: 2
+        shadow_width: 0
+        scrollable: False
+        widgets:
+          - label:
+              id: id_lv_popup_generic_title
+              align: TOP_MID
+              y: 8
+              text: ""
+              text_color: color_white
+              text_align: CENTER
+              text_font: lato_24
+              text_decor: UNDERLINE
+          - label:
+              id: id_lv_popup_generic_message
+              align: CENTER
+              width: 100%
+              pad_left: 12
+              pad_right: 12
+              text: ""
+              text_color: color_white
+              text_align: CENTER
+              long_mode: WRAP
+              text_font: lato_18
+          - obj:
+              align: BOTTOM_MID
+              y: 0
+              width: 100%
+              height: 50
+              pad_all: 0
+              bg_opa: TRANSP
+              border_opa: TRANSP
+              layout:
+                type: FLEX
+                flex_flow: ROW
+                flex_align_main: CENTER
+                pad_column: 18
+              widgets:
+                - button:
+                    id: id_lv_popup_generic_action_button
+                    flex_grow: 1
+                    radius: 10
+                    height: 100%
+                    bg_color: color_red
+                    bg_opa: COVER
+                    shadow_opa: COVER
+                    shadow_color: color_gray
+                    shadow_width: 6
+                    shadow_spread: 1
+                    widgets:
+                      - label:
+                          id: id_lv_popup_generic_action_label
+                          align: CENTER
+                          text: "${i18n_confirm}"
+                          text_color: color_white
+                          text_font: lato_18
+                    on_press:
+                      then:
+                        - script.execute: id_script_popup_action_execute
+                - button:
+                    id: id_lv_popup_generic_cancel_button
+                    flex_grow: 1
+                    radius: 10
+                    height: 100%
+                    bg_color: color_gray
+                    bg_opa: COVER
+                    shadow_opa: COVER
+                    shadow_color: color_gray
+                    shadow_width: 6
+                    shadow_spread: 1
+                    widgets:
+                      - label:
+                          align: CENTER
+                          text: "${i18n_cancel}"
+                          text_color: color_white
+                          text_font: lato_18
+                    on_press:
+                      then:
+                        - lvgl.widget.hide: id_lv_popup_generic_overlay

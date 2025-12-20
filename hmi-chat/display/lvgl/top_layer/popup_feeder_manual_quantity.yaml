@@ -1,0 +1,112 @@
+# Feeder manual quantity popup overlay with roller and close button
+obj:
+  id: id_lv_popup_feeder_quantity_overlay
+  align: CENTER
+  width: 320
+  height: 480
+  bg_color: color_black
+  bg_opa: 65%
+  border_opa: TRANSP
+  pad_all: 0
+  clickable: true
+  hidden: true
+  widgets:
+    - obj:
+        align: CENTER
+        width: 260
+        height: 260
+        pad_all: 12
+        radius: 12
+        bg_color: color_dark_gray
+        bg_opa: COVER
+        border_color: color_dark_gray
+        border_width: 2
+        shadow_width: 0
+        scrollable: false
+        widgets:
+          # Close button (top-right, red, with "X")
+          - button:
+              id: id_lv_popup_feeder_quantity_close
+              align: TOP_RIGHT
+              width: 50
+              height: 50
+              pad_all: 0
+              radius: 9
+              bg_color: color_red
+              bg_opa: COVER
+              shadow_opa: COVER
+              shadow_color: color_gray
+              shadow_width: 6
+              shadow_spread: 1
+              on_press:
+                then:
+                  - lvgl.widget.hide: id_lv_popup_feeder_quantity_overlay
+              widgets:
+                - label:
+                    align: CENTER
+                    text: "${i18n_close_short}"
+                    text_color: color_white
+                    text_font: lato_18
+          - roller:
+              id: id_lv_roller_feeder_manual_quantity
+              align: CENTER
+              x: -20
+              visible_row_count: 5
+              mode: NORMAL
+              text_font: lato_18
+              on_value:
+                then:
+                  - homeassistant.event:
+                      event: esphome.set_entity_value
+                      data:
+                        message: feeder_set_manual_feed
+                        value: !lambda return text.c_str();
+              options:
+                - "¹/₁₂"
+                - "²/₁₂"
+                - "³/₁₂"
+                - "⁴/₁₂"
+                - "⁵/₁₂"
+                - "⁶/₁₂"
+                - "⁷/₁₂"
+                - "⁸/₁₂"
+                - "⁹/₁₂"
+                - "¹⁰/₁₂"
+                - "¹¹/₁₂"
+                - "1"
+                - "1 ¹/₁₂"
+                - "1 ²/₁₂"
+                - "1 ³/₁₂"
+                - "1 ⁴/₁₂"
+                - "1 ⁵/₁₂"
+                - "1 ⁶/₁₂"
+                - "1 ⁷/₁₂"
+                - "1 ⁸/₁₂"
+                - "1 ⁹/₁₂"
+                - "1 ¹⁰/₁₂"
+                - "1 ¹¹/₁₂"
+                - "2"
+                - "2 ¹/₁₂"
+                - "2 ²/₁₂"
+                - "2 ³/₁₂"
+                - "2 ⁴/₁₂"
+                - "2 ⁵/₁₂"
+                - "2 ⁶/₁₂"
+                - "2 ⁷/₁₂"
+                - "2 ⁸/₁₂"
+                - "2 ⁹/₁₂"
+                - "2 ¹⁰/₁₂"
+                - "2 ¹¹/₁₂"
+                - "3"
+                - "3 ¹/₁₂"
+                - "3 ²/₁₂"
+                - "3 ³/₁₂"
+                - "3 ⁴/₁₂"
+                - "3 ⁵/₁₂"
+                - "3 ⁶/₁₂"
+                - "3 ⁷/₁₂"
+                - "3 ⁸/₁₂"
+                - "3 ⁹/₁₂"
+                - "3 ¹⁰/₁₂"
+                - "3 ¹¹/₁₂"
+                - "4"

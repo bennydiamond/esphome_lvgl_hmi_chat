@@ -1,0 +1,78 @@
+dname: "hmi-chat"
+uname: "HMI Équipments Chats"
+
+<<: !include i18n/fr.yaml
+
+settings:           "\U000F0493" # settings
+illumination:       "\U0000e916" # lux
+ha:                 "\U000F07D0" # home assistant
+wifi_25:            "\U000F091F" # wifi signal from 25% to 1%
+wifi_50:            "\U000F0922" # wifi signal from 50% to 25%
+wifi_75:            "\U000F0925" # wifi signal from 75% to 50%
+wifi_100:           "\U000F0928" # wifi signal from 100% to 75% or disable
+cat:                "\U000F011B" # mdi-cat 
+arrow_up:           "\U000F005D" # mdi-arrow-up
+arrow_down:         "\U000F0045" # mdi-arrow-down
+water:              "\U000F058C" # mdi-water
+water_alert:        "\U000F1502" # mdi-water-alert
+food_drumstick:     "\U000F141F" # mdi-food-drumstick
+
+ha_instance_url: "http://192.168.0.250:8123"
+# token is valid for 10 years (2025-02-15)
+ha_auth_token: !secret ha_long_term_auth_token
+
+
+# Thresholds (percent values)
+# Baseline low-water threshold for fountain water level bar coloring
+threshold_water_low_percent: "25.0"
+# Additional warn offset above low threshold (e.g., yellow at low + offset)
+threshold_water_warn_offset_percent: "15.0"
+
+# Home Assistant entity IDs
+
+## Feeder — Petlibro Integration
+feeder_device_sn_entity: sensor.mangeoire_de_la_p_tite_crisse_device_sn                         # Serial number → id_lv_lab_feeder_device_sn
+feeder_mac_address_entity: sensor.mangeoire_de_la_p_tite_crisse_mac_address                     # MAC address → id_lv_lab_feeder_mac_address
+feeder_wifi_ssid_entity: sensor.mangeoire_de_la_p_tite_crisse_wi_fi_ssid                        # SSID text → id_lv_lab_feeder_wifi_ssid (when connected)
+feeder_wifi_signal_entity: sensor.mangeoire_de_la_p_tite_crisse_wi_fi_signal_strength           # Wi‑Fi RSSI (dBm) → feeder Wi‑Fi icon bars/color
+feeder_dessi_remain_days_entity: sensor.mangeoire_de_la_p_tite_crisse_desiccant_remaining_days  # Dessiccant remaining days → button/label state & color
+feeder_batt_status_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_battery_status           # Battery low/ok → status label color/text
+feeder_dispenser_status_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_food_dispenser      # Dispenser issue → status label color/text
+feeder_food_status_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_food_status              # Food level problem → status label color/text
+feeder_lid_status_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_lid_status                # Lid open/issue → status label color/text
+feeder_feeding_plan_active_entity: sensor.mangeoire_de_la_p_tite_crisse_today_s_feeding_plan    # Auto plan active → status label text/color
+feeder_wifi_connected_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_wi_fi                 # Wi‑Fi connected → SSID gating/icon outline
+feeder_general_issue_entity: binary_sensor.problemes_mangeoire_de_la_tite_crisse                # Integration “problem” flag → card shadow/notification button
+feeder_manual_feed_quantity_entity: select.mangeoire_de_la_p_tite_crisse_manual_feed_quantity   # Manual feed portion select → roller/label sync
+
+## Feeder — User Helpers
+feeder_issue_list_entity: sensor.liste_problemes_mangeoire_de_la_tite_crisse                    # Aggregated feeder issues list → popup/notification content
+feeder_last_feed_time_entity: sensor.mangeoire_de_la_petite_crisse_derniere_distribution        # Pretty last feed time → status label
+feeder_next_feed_time_entity: sensor.mangeoire_de_la_petite_crisse_prochaine_distribution       # Pretty next feed time → status label
+
+## Fountain — Petlibro Integration
+fountain_device_sn_entity: sensor.fontaine_device_sn                                            # Serial number → id_lv_lab_fountain_device_sn
+fountain_mac_address_entity: sensor.fontaine_mac_address                                        # MAC address → id_lv_lab_fountain_mac_address
+fountain_wifi_ssid_entity: sensor.fontaine_wi_fi_ssid                                           # SSID text → id_lv_lab_fountain_wifi_ssid (when connected)
+fountain_wifi_signal_entity: sensor.fontaine_wi_fi_signal_strength                              # Wi‑Fi RSSI (dBm) → fountain Wi‑Fi icon bars/color
+fountain_clean_cycle_number_entity: number.fontaine_cleaning_cycle                              # Configured cleaning cycle duration (days) → display context
+fountain_filter_cycle_number_entity: number.fontaine_filter_cycle                               # Configured filter cycle duration (days) → display context
+fountain_clean_remaining_days_entity: sensor.fontaine_remaining_cleaning_days                   # Remaining days until cleaning → button/label state & color
+fountain_filter_remaining_days_entity: sensor.fontaine_remaining_filter_day                     # Remaining days until filter change → button/label state & color
+fountain_water_level_percent_entity: sensor.fontaine_remaining_water                            # Remaining water (%) → bar id_lv_bar_fountain_water_level & percent label
+fountain_water_consumption_today_entity: sensor.fontaine_today_s_water_consumption              # Today’s consumption (mL) → label
+fountain_water_consumption_yesterday_entity: sensor.fontaine_yesterday_s_water_consumption      # Yesterday’s consumption (mL) → label
+fountain_drinks_today_entity: sensor.fontaine_today_s_total_drinking_times                      # Today’s drink count → label
+fountain_drinks_yesterday_entity: sensor.fontaine_yesterday_s_total_drinking_times              # Yesterday’s drink count → label
+fountain_dispensing_mode_select_entity: select.fontaine_water_dispensing_mode                   # Pump mode select → dropdown sync
+fountain_wifi_connected_entity: binary_sensor.fontaine_wi_fi                                    # Wi‑Fi connected → SSID gating/icon outline
+fountain_general_issue_entity: binary_sensor.problemes_fontaine_chats                           # Integration “problem” flag → card shadow/notification button
+
+## Fountain — User Helpers
+fountain_low_threshold_input_number_entity: input_number.fontaine_chat_configuration_seuil_niveau_bas # Low-water threshold (%) → updates global for bar colors
+fountain_low_water_binary_entity: binary_sensor.fountaine_chats_niveau_d_eau_bas                # Low-water alert → shows notification water-alert button
+fountain_issue_list_entity: sensor.liste_problemes_fontaine_chats                               # Aggregated fountain issues list → popup/notification content
+
+## Global — User Helpers
+combined_problem_list_entity: sensor.liste_problemes_fontaine_mangeoire_combined                # Combined fountain+feeder issues list → popup/notification content
+

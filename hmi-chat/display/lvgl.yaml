@@ -1,0 +1,61 @@
+packages:
+  page_home: !include lvgl/page_home.yaml
+  page_feeder: !include lvgl/page_feeder.yaml
+  page_fountain: !include lvgl/page_fountain.yaml
+  page_settings: !include lvgl/page_settings.yaml
+  notification_area_sensors: !include notification_area_sensors.yaml
+
+
+font: !include fonts.yaml
+image: !include images.yaml
+color: !include colors.yaml
+
+globals:
+  - id: id_global_rssi
+    type: int
+    initial_value: '0'
+
+interval:
+  - interval: 10s
+    startup_delay: 3s
+    then:
+      - lambda: |-
+          std::string ssid = id(id_text_wifi_ssid).state;
+          int rssi = id(id_global_rssi);
+          std::string ip_address = id(id_text_ip_address).state;
+
+          // Protocol-defined maximum lengths
+          const size_t SSID_MAX_LEN = 32;   // IEEE 802.11 SSID max
+          const size_t IPV6_MAX_LEN = 39;   // Full IPv6 textual form (8 groups)
+
+          std::string combined; 
+          if(ssid.length() > 0) {
+            combined += "SSID: " + ssid.substr(0, SSID_MAX_LEN) + "\n";
+          } else {
+            combined += "SSID: N/A\n";
+          }
+          if(ip_address.length() > 0) {
+            combined += "IP: " + ip_address.substr(0, IPV6_MAX_LEN) + "\n";
+          } else {
+            combined += "IP: N/A\n";
+          }
+          combined += "RSSI: " + std::to_string(rssi) + " dBm\n";
+
+          // Update Wi-Fi info label on Settings page (tile 2)
+          if (id(id_lv_lab_wifi_info_text) != nullptr) {
+            lv_label_set_text(id(id_lv_lab_wifi_info_text), combined.c_str());
+          }
+
+lvgl:
+  disp_bg_image: none
+            
+  top_layer: # Top Screen Status bar. Visible on all pages.
+    widgets:
+      # Top notification area delimiter line
+      - <<: !include lvgl/top_layer/notification_area.yaml
+      # Generic confirmation popup
+      - <<: !include lvgl/top_layer/popup_generic.yaml
+      # Catstuff problem popup (single close button)
+      - <<: !include lvgl/top_layer/popup_catstuff.yaml
+      # Feeder manual quantity popup (roller + close)
+      - <<: !include lvgl/top_layer/popup_feeder_manual_quantity.yaml

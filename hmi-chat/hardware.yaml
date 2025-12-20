@@ -1,0 +1,265 @@
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  flash_size: 16MB
+  cpu_frequency : 240MHz
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_ESP32S3_DATA_CACHE_64KB: "y"
+      CONFIG_ESPTOOLPY_FLASHSIZE_16MB: "y"
+      CONFIG_FREERTOS_HZ: "1000"
+      CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240: y
+      CONFIG_ESPTOOLPY_FLASHMODE_QIO: y
+      CONFIG_SPIRAM_MODE_OCT: y
+      CONFIG_IDF_EXPERIMENTAL_FEATURES: y
+      CONFIG_SPIRAM_SPEED_80M: y
+      CONFIG_SPIRAM_FETCH_INSTRUCTIONS: y
+      CONFIG_SPIRAM_RODATA: y
+      CONFIG_ESP32S3_DATA_CACHE_LINE_64B: y
+      CONFIG_COMPILER_OPTIMIZATION_PERF: y
+
+esphome:
+  name: ${dname}
+  min_version: 2025.11.0
+  platformio_options:
+    build_unflags: -Werror=all
+    board_build.flash_mode: dio
+    board_build.f_flash: 80000000L
+    board_build.f_cpu: 240000000L
+    build_flags: 
+      - -DBOARD_HAS_PSRAM
+    board_build.esp-idf.memory_type: qio_opi
+    board_upload.maximum_ram_size: 524288
+    board_build.flash_size: 16MB
+  on_boot:
+    - priority: 500 # a bit after sensor init
+      then:
+        - number.set:
+            id: id_num_awake_backlight_brightness
+            value: 100
+        - number.set:
+            id: id_num_idle_backlight_brightness
+            value: 20
+    - priority: -100 # everything should be initialized
+      then:
+        - script.execute: id_script_backlight_timeout
+
+logger:
+  level: DEBUG
+  hardware_uart: UART0
+  #baud_rate: 0
+#  logs: 
+#    safe_mode: INFO
+#    debug: INFO
+#    main: WARN
+#    esp-idf: WARN
+#    esp32.preferences: WARN
+#    wifi: WARN
+#    api: WARN
+#    sntp: WARN
+#    i2c: WARN
+#    i2c.idf: WARN
+#    ch422g: WARN
+#    touchscreen: WARN
+#    gt911.touchscreen: WARN
+#    switch: WARN
+#    sensor: WARN
+#    binary_sensor: WARN
+#    text_sensor: WARN
+#    light: WARN
+#    select: WARN
+#    homeassistant.sensor: WARN
+#    homeassistant.binary_sensor: WARN
+#    homeassistant.text_sensor: WARN
+#    template.switch: WARN
+#    script: WARN
+#    http_request: WARN
+#    http_request.idf: WARN
+#    online_image: WARN
+#    number: WARN
+
+
+http_request:
+  verify_ssl: false
+
+debug:
+  update_interval: 10s
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  use_address: 192.168.1.135
+  power_save_mode: LIGHT # LIGHT is default for ESP32
+  passive_scan: True
+  manual_ip:
+    static_ip: 192.168.1.135
+    gateway: 192.168.0.3
+    subnet: 255.255.254.0
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "HMI Entree Fallback hotspot"
+    password: !secret wifi_password
+
+captive_portal:
+  
+web_server:
+  port: 80
+  include_internal: True
+
+time:
+  - id: !extend id_sntp_time
+    on_time:
+      - minutes: '*'
+        seconds: 0
+        then:
+          - script.execute: time_update
+    on_time_sync:
+      then:
+        - script.execute: time_update 
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+spi:
+  - type: quad
+    clk_pin: 47
+    data_pins: [21, 48, 40, 39]
+
+i2c:
+  - sda: 4
+    scl: 8
+
+text_sensor:
+  - platform: debug
+    device:
+      name: "Device Info"
+      id: id_sensor_debug_device_info
+      internal: True
+      filters:
+        - lambda: |-
+            std::string str = x;
+            if (str.length() > 264) {
+              return str.substr(0, 264);
+            }
+            return str;
+        - lambda: |-
+            std::replace(x.begin(), x.end(), '|', '\n');
+            return x;
+        - prepend: "ESPHome version: "
+      on_value:
+        then:
+          - lvgl.label.update:
+              id: id_lv_lab_debug_device_info
+              text: !lambda "return x.c_str();"
+
+sensor:
+  - id: !extend id_sensor_wifi_signal
+    on_value: 
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_wifi_status
+            text_color: !lambda |-
+              if (id(id_sensor_wifi_signal).state < 0) {
+              return lv_color_hex(0x00FF00);
+              }
+              return lv_color_hex(0x333333);
+            text: !lambda |-
+              if (id(id_sensor_wifi_signal).state <= -80) {
+              return "${wifi_25}";
+              } else if (id(id_sensor_wifi_signal).state > -80 && id(id_sensor_wifi_signal).state <= -70) {
+              return "${wifi_50}";
+              } else if (id(id_sensor_wifi_signal).state > -70 && id(id_sensor_wifi_signal).state <= -60) {
+              return "${wifi_75}";
+              } else if (id(id_sensor_wifi_signal).state > -60) {
+              return "${wifi_100}";
+              }
+              return "${wifi_100}";
+        - globals.set:
+              id: id_global_rssi
+              value: !lambda 'return (int)x;'
+  - platform: debug
+    free:
+      name: "Heap Free"
+      id: id_sensor_debug_heap_free
+      internal: True
+      on_value: 
+        then:
+          - lvgl.label.update:
+              id: id_lv_lab_debug_heap_free
+              text:
+                format: "Heap free: %.3fkB"
+                args: [x / 1024]
+    loop_time:
+      name: "Loop Time"
+      id: id_sensor_debug_loop_time
+      internal: True
+      on_value: 
+        then:
+          - lvgl.label.update:
+              id: id_lv_lab_debug_loop_time
+              text:
+                format: "Loop time: %.0fms"
+                args: [x]
+    psram:
+      name: "Free PSRAM"
+      id: id_sensor_debug_free_psram
+      internal: True
+      on_value: 
+        then:
+          - lvgl.label.update:
+              id: id_lv_lab_debug_psram_free
+              text:
+                format: "PSRAM free: %.3fkB"
+                args: [x / 1024]
+
+# Backlight
+output:
+  - id: id_output_backlight_brightness
+    platform: ledc
+    pin: 1
+    min_power: 0.07
+
+light:
+  - platform: monochromatic
+    id: id_light_backlight_brightness
+    output: id_output_backlight_brightness
+    name: "Backlight Brightness"
+    restore_mode: ALWAYS_ON
+    on_state:
+      then:
+        - lvgl.slider.update:
+            id: id_lv_slider_backlight_brigthness
+            value: !lambda "return id(id_light_backlight_brightness).remote_values.get_brightness() * 100.0;"
+        - lvgl.label.update:
+            id: id_lv_lab_backlight_brightness
+            text:
+                format: "%u%%"
+                args: [(uint8_t)(id(id_light_backlight_brightness).remote_values.get_brightness() * 100)]
+
+display:
+  - id: main_display
+    platform: qspi_dbi
+    dimensions:
+      height: 480
+      width: 320
+    model: CUSTOM
+    data_rate: 40MHz
+    cs_pin:
+      number: 45
+      ignore_strapping_warning: true
+    draw_from_origin: true
+    update_interval: never
+    auto_clear_enabled: false
+
+touchscreen:
+  - id: main_touchscreen
+    platform: axs15231
+    on_update:
+      then:
+        - script.execute: id_script_backlight_timeout
+
+
+script: !include display/lvgl/page_home/datetime_widget_scripts.yaml

@@ -1,0 +1,18 @@
+substitutions: !include hmi-chat/substitutions.yaml
+
+packages:
+  hardware: !include hmi-chat/sdl.yaml
+  button: !include hmi-chat/components/button.yaml
+  globals: !include hmi-chat/components/globals.yaml
+  interval: !include hmi-chat/components/interval.yaml
+  text_sensor: !include hmi-chat/components/text_sensor.yaml
+  sensor: !include hmi-chat/components/sensor.yaml
+  binary_sensor: !include hmi-chat/components/binary_sensor.yaml
+  switch: !include hmi-chat/components/switch.yaml
+  online_image: !include hmi-chat/components/online_image.yaml
+  select: !include hmi-chat/components/select.yaml
+  number: !include hmi-chat/components/number.yaml
+  script: !include hmi-chat/components/script.yaml
+  lvgl: !include hmi-chat/display/lvgl.yaml
+  feeder_sensors: !include hmi-chat/components/feeder_sensors.yaml
+  fountain_sensors: !include hmi-chat/components/fountain_sensors.yaml

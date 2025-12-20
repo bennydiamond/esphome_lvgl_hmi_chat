@@ -1,0 +1,9 @@
+globals:
+  - id: popup_action
+    type: int
+    restore_value: no
+    initial_value: '0'
+  - id: is_on_settings_page
+    type: bool
+    restore_value: no
+    initial_value: 'false'

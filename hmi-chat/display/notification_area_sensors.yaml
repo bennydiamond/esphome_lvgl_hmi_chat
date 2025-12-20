@@ -1,0 +1,114 @@
+binary_sensor:
+  - platform: template
+    id: id_template_api_status
+    internal: True
+    condition:
+      api.connected:
+    on_press:
+      then:
+        - lvgl.label.update: 
+            id: id_lv_lab_ha_status
+            text_color: color_blue
+    on_release: 
+      then:
+        - lvgl.label.update: 
+            id: id_lv_lab_ha_status
+            text_color: color_dark_gray
+
+  # Problem cat feeder from HA #
+  - platform: homeassistant
+    id: id_ha_cat_feeder_problem
+    entity_id: ${feeder_general_issue_entity}
+    trigger_on_initial_state: True
+    on_press:
+      then:
+        - lvgl.widget.show: id_lv_but_catstuff_problem
+        - lvgl.label.update:
+            id: id_lv_lab_catstuff_problem
+            text_color: color_red
+            hidden: false
+    on_release:
+      then:
+        - if:
+            condition:
+              - binary_sensor.is_off: id_ha_cat_fountain_problem
+            then:
+              - lvgl.widget.hide: id_lv_but_catstuff_problem
+            else:
+              - lvgl.label.update:
+                  id: id_lv_lab_catstuff_problem
+                  text_color: color_blue
+                  hidden: false
+            
+
+  # Problem cat fountain from HA #
+  - platform: homeassistant
+    id: id_ha_cat_fountain_problem
+    entity_id: ${fountain_general_issue_entity}
+    trigger_on_initial_state: True
+    on_press:
+      then:
+        - lvgl.widget.show: id_lv_but_catstuff_problem
+        - lvgl.label.update:
+            id: id_lv_lab_catstuff_problem
+            text_color: color_blue
+            hidden: false
+    on_release:
+      then:
+        - if:
+            condition:
+              - binary_sensor.is_off: id_ha_cat_feeder_problem
+            then:
+              - lvgl.widget.hide: id_lv_but_catstuff_problem
+            else:
+              - lvgl.label.update:
+                  id: id_lv_lab_catstuff_problem
+                  text_color: color_red
+                  hidden: false
+
+  # Fountain low water alert
+  - platform: homeassistant
+    id: id_ha_fountain_low_water
+    entity_id: ${fountain_low_water_binary_entity}
+    trigger_on_initial_state: True
+    on_press:
+      then:
+        - lvgl.widget.show: id_lv_but_water_alert
+    on_release:
+      then:
+        - lvgl.widget.hide: id_lv_but_water_alert
+
+globals:
+  - id: id_cat_blinker_toggle
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+
+interval:
+  - interval: 800ms
+    startup_delay: 0s
+    then:
+      # Cat stuff blinking
+      - if:
+          condition:
+            and: 
+              - binary_sensor.is_on: id_ha_cat_feeder_problem
+              - binary_sensor.is_on: id_ha_cat_fountain_problem
+          then:
+            - if:
+                condition:
+                  - lambda: "return id(id_cat_blinker_toggle) == true;"
+                then:
+                  - lvgl.label.update:
+                      id: id_lv_lab_catstuff_problem
+                      text_color: color_red
+                  - globals.set:
+                      id: id_cat_blinker_toggle
+                      value: "false"
+                else:
+                  - lvgl.label.update:
+                      id: id_lv_lab_catstuff_problem
+                      text_color: color_blue
+                  - globals.set:
+                      id: id_cat_blinker_toggle
+                      value: "true" 

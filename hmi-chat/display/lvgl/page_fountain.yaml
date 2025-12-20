@@ -1,0 +1,151 @@
+lvgl:
+  pages:
+    - id: page_fountain
+      skip: False
+      bg_color: color_black
+      scrollable: False
+      widgets:
+        - obj:
+            y: 43
+            width: 320
+            height: 437
+            align: TOP_LEFT
+            pad_all: 0
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            scrollbar:
+              bg_opa: TRANSP
+            widgets:
+              - image:
+                  align: TOP_LEFT
+                  x: 10
+                  y: 10
+                  src: id_img_fountain
+              - label:
+                  align: TOP_RIGHT
+                  x: -10
+                  y: 8
+                  width: 230
+                  text_font: lato_14
+                  text_color: color_white
+                  long_mode: SCROLL
+                  text_align: RIGHT
+                  id: id_lv_lab_fountain_device_sn
+                  text: "${i18n_sn_placeholder}"
+              - label:
+                  align: TOP_RIGHT
+                  x: -10
+                  y: 30
+                  width: 230
+                  text_font: lato_14
+                  text_color: color_white
+                  long_mode: SCROLL
+                  text_align: RIGHT
+                  id: id_lv_lab_fountain_mac_address
+                  text: "${i18n_mac_placeholder}"
+              - label:
+                  align: TOP_RIGHT
+                  x: -6
+                  y: 51
+                  text_font: mdi_icons_18
+                  text_color: color_white
+                  id: id_lv_lab_fountain_wifi_icon
+                  text: "\U000F092F" # wifi-strength-outline
+              - label:
+                  align: TOP_RIGHT
+                  x: -30
+                  y: 52
+                  width: 210
+                  text_font: lato_14
+                  text_color: color_white
+                  long_mode: SCROLL
+                  text_align: RIGHT
+                  id: id_lv_lab_fountain_wifi_ssid
+                  text: "${i18n_wifi_placeholder}"
+              # Status section for Fountain sensors
+              - obj:
+                  align: TOP_LEFT
+                  x: 10
+                  y: 90
+                  width: 300
+                  height: 260
+                  bg_opa: TRANSP
+                  border_opa: TRANSP
+                  pad_all: 0
+                  layout:
+                    type: GRID
+                    grid_columns: [100%]
+                    grid_rows: [FR(1), FR(1), FR(1), FR(1), FR(1), FR(1)]
+                    pad_row: 4
+                  widgets:
+                    - label:
+                        align: LEFT_MID
+                        text_font: lato_18
+                        text_color: color_white
+                        long_mode: SCROLL
+                        id: id_lv_lab_fountain_today_consumption
+                        text: "${i18n_cons_today_placeholder}"
+                    - label:
+                        align: LEFT_MID
+                        text_font: lato_18
+                        text_color: color_white
+                        long_mode: SCROLL
+                        id: id_lv_lab_fountain_yesterday_consumption
+                        text: "${i18n_cons_yesterday_placeholder}"
+                    - label:
+                        align: LEFT_MID
+                        text_font: lato_18
+                        text_color: color_white
+                        long_mode: SCROLL
+                        id: id_lv_lab_fountain_today_drinks
+                        text: "${i18n_drinks_today_placeholder}"
+                    - label:
+                        align: LEFT_MID
+                        text_font: lato_18
+                        text_color: color_white
+                        long_mode: SCROLL
+                        id: id_lv_lab_fountain_yesterday_drinks
+                        text: "${i18n_drinks_yesterday_placeholder}"
+                    - label:
+                        align: BOTTOM_LEFT
+                        pad_top: 10
+                        text_font: lato_18
+                        text_color: color_white
+                        long_mode: SCROLL
+                        id: id_lv_lab_fountain_dispensing_mode_label
+                        text: "${i18n_pump_mode_label}"
+                    - dropdown:
+                        id: id_lv_dropdown_fountain_dispensing_mode
+                        align: TOP_RIGHT
+                        width: 150
+                        grid_cell_x_align: END
+                        text_font: lato_18
+                        indicator:
+                          text_font: montserrat_18
+                        options:
+                        - "En continu"
+                        - "Intermittente"
+              - button:
+                  x: 0
+                  y: 0
+                  width: 80
+                  height: 50
+                  bg_opa: TRANSP
+                  shadow_opa: TRANSP
+                  radius: 0
+                  align: BOTTOM_LEFT
+                  widgets:
+                    - label:
+                        x: 5
+                        y: -5
+                        pad_all: 0
+                        text_font: montserrat_22
+                        text_color: color_gray
+                        text: "\uF015"
+                  on_press:
+                    then:
+                      - lvgl.page.show: 
+                          id: page_home
+                          animation: FADE_OUT
+                          time: 300ms
+                      - delay: 300ms

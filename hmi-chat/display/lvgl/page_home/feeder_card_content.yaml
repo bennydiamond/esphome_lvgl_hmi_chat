@@ -1,0 +1,240 @@
+grid_cell_column_pos: 0
+grid_cell_row_pos: 0
+grid_cell_x_align: STRETCH
+grid_cell_y_align: STRETCH
+bg_color: color_dark_gray
+shadow_opa: COVER
+shadow_color: color_gray
+shadow_width: 9
+shadow_spread: 3
+pad_all: 0
+border_opa: COVER
+widgets:
+  - image:
+      align: TOP_LEFT
+      x: 10
+      y: 10
+      src: id_img_feeder
+  - obj:
+      align: TOP_RIGHT
+      width: 216
+      height: 70
+      y: 10
+      border_opa: TRANSP
+      bg_opa: TRANSP
+      pad_all: 0
+      clickable: false
+      layout:
+        type: GRID
+        grid_columns: [100%]
+        grid_rows: [FR(3), FR(3)]
+      widgets:
+        - label:
+            grid_cell_column_pos: 0
+            grid_cell_row_pos: 0
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            align: CENTER
+            bg_opa: TRANSP
+            long_mode: WRAP
+            text_font: lato_30
+            text_color: color_white
+            text_align: CENTER
+            text_decor: UNDERLINE
+            text: "${i18n_dessiccant_label}"
+        - label:
+            id: id_lv_lab_feeder_dessiccant_days_left
+            grid_cell_column_pos: 0
+            grid_cell_row_pos: 1
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            align: CENTER
+            bg_opa: TRANSP
+            long_mode: WRAP
+            text_font: lato_18
+            text_color: color_white
+            text_align: CENTER
+  - obj:
+      align: TOP_LEFT
+      y: 90
+      height: 50
+      width: 100%
+      pad_left: 4
+      pad_right: 4
+      border_opa: TRANSP
+      bg_opa: TRANSP
+      pad_all: 0
+      layout:
+        type: GRID
+        grid_columns: [FR(10), FR(8)]
+        grid_rows: [100%]
+        pad_column: 40
+      widgets:
+        - obj:
+            grid_cell_column_pos: 0
+            grid_cell_row_pos: 0
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            border_opa: TRANSP
+            bg_opa: TRANSP
+            pad_all: 0
+            clip_corner: true
+            radius: 14
+            layout:
+              type: GRID
+              grid_columns: [FR(6), FR(8), FR(6)]
+              grid_rows: [100%]
+              pad_column: 0
+            widgets:
+              - button:
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  pad_all: 0
+                  border_opa: TRANSP
+                  bg_opa: COVER
+                  radius: 0
+                  clip_corner: true
+                  press_lock: true
+                  on_press:
+                    then:
+                      - homeassistant.event:
+                          event: esphome.button_pressed
+                          data:
+                            message: button_feeder_reduce_manual_feed
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_align: CENTER
+                        text_font: mdi_icons_32
+                        text: ${arrow_down}
+              
+              - button:
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  pad_all: 0
+                  border_opa: TRANSP
+                  align: CENTER
+                  bg_color: color_white
+                  bg_opa: COVER
+                  radius: 0
+                  clip_corner: true
+                  scrollable: False
+                  on_press:
+                    then:
+                      - lvgl.widget.show: id_lv_popup_feeder_quantity_overlay
+                  widgets:
+                    - label:
+                        align: CENTER
+                        pad_all: 0
+                        bg_opa: TRANSP
+                        id: id_lv_lab_feeder_manual_feed_portion_display
+                        text_align: CENTER
+                        text_font: lato_18
+                        text_color: color_black
+              - button:
+                  grid_cell_column_pos: 2
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  pad_all: 0
+                  border_opa: TRANSP
+                  radius: 0
+                  clip_corner: true
+                  press_lock: true
+                  on_press:
+                    then:
+                      - homeassistant.event:
+                          event: esphome.button_pressed
+                          data:
+                            message: button_feeder_increase_manual_feed
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_align: CENTER
+                        text_font: mdi_icons_32
+                        text: ${arrow_up}
+        - button:
+            grid_cell_column_pos: 1
+            grid_cell_row_pos: 0
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            press_lock: true
+            on_press:
+              then:
+                  - homeassistant.event:
+                      event: esphome.button_pressed
+                      data:
+                        message: button_feeder_manual_dispense
+            widgets:
+              - label:
+                  align: CENTER
+                  text_font: lato_18
+                  text_color: color_white
+                  text_align: CENTER
+                  text: Nourrir
+  - obj:
+      align: TOP_LEFT
+      y: 150
+      height: 50
+      width: 100%
+      pad_left: 4
+      pad_right: 4
+      border_opa: TRANSP
+      bg_opa: TRANSP
+      pad_all: 0
+      layout:
+        type: GRID
+        grid_columns: [FR(1), FR(1)]
+        grid_rows: [100%]
+        pad_column: 40
+      widgets:
+        - button:
+            id: id_lv_but_feeder_reset_dessiccant
+            grid_cell_column_pos: 0
+            grid_cell_row_pos: 0
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            pad_all: 0
+            border_opa: TRANSP
+            bg_opa: 10%
+            clickable: false
+            bg_color: color_bulb_blue
+            press_lock: true
+            on_press:
+              then:
+                - script.execute: id_script_popup_show_feeder_dessiccant
+            widgets:
+              - label:
+                  id: id_lv_lab_feeder_reset_dessiccant
+                  align: CENTER
+                  text_font: lato_18
+                  text_color: color_white
+                  text_align: CENTER
+                  text: "${i18n_reset_dessiccant_button}"
+                  text_opa: 40%
+
+        - button:
+            grid_cell_column_pos: 1
+            grid_cell_row_pos: 0
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            pad_all: 0
+            border_opa: TRANSP
+            press_lock: true
+            on_press:
+              then:
+                - homeassistant.event:
+                    event: esphome.button_pressed
+                    data:
+                      message: button_feeder_open_door
+            widgets:
+              - label:
+                  align: CENTER
+                  text_font: lato_18
+                  text_color: color_white
+                  text_align: CENTER
+                  text: Ouvrir

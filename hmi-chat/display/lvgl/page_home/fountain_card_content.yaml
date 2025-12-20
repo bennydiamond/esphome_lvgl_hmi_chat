@@ -1,0 +1,209 @@
+grid_cell_column_pos: 0
+grid_cell_row_pos: 1
+grid_cell_x_align: STRETCH
+grid_cell_y_align: STRETCH
+bg_color: color_dark_gray
+shadow_opa: COVER
+shadow_color: color_gray
+shadow_width: 9
+shadow_spread: 3
+pad_all: 0
+widgets:
+  - image:
+      align: TOP_LEFT
+      x: 10
+      y: 10
+      src: id_img_fountain
+  - obj:
+      align: TOP_RIGHT
+      width: 216
+      height: 70
+      y: 10
+      border_opa: TRANSP
+      bg_opa: TRANSP
+      pad_all: 0
+      pad_top: 6
+      pad_bottom: 12
+      clickable: false
+      layout:
+        type: GRID
+        grid_columns: [FR(10), FR(7)]
+        grid_rows: [FR(1), FR(1)]
+      widgets:
+        - label:
+            grid_cell_column_pos: 0
+            grid_cell_row_pos: 0
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            align: CENTER
+            bg_opa: TRANSP
+            long_mode: WRAP
+            text_font: lato_18
+            text_color: color_white
+            text_align: RIGHT
+            text_decor: UNDERLINE
+            text: "${i18n_filter_label}"
+        - label:
+            id: id_lab_fountain_filter_remaining_days
+            grid_cell_column_pos: 1
+            grid_cell_row_pos: 0
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            align: CENTER
+            bg_opa: TRANSP
+            long_mode: WRAP
+            text_font: lato_18
+            text_color: color_white
+            text_align: LEFT
+            text: ""
+        - label:
+            grid_cell_column_pos: 0
+            grid_cell_row_pos: 1
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            align: CENTER
+            bg_opa: TRANSP
+            long_mode: WRAP
+            text_font: lato_18
+            text_color: color_white
+            text_align: RIGHT
+            text_decor: UNDERLINE
+            text: "${i18n_cleaning_label}"
+        - label:
+            id: id_lab_fountain_clean_remaining_days
+            grid_cell_column_pos: 1
+            grid_cell_row_pos: 1
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            align: CENTER
+            bg_opa: TRANSP
+            long_mode: WRAP
+            text_font: lato_18
+            text_color: color_white
+            text_align: LEFT
+            text: ""
+  - obj:
+      align: TOP_LEFT
+      y: 100
+      height: 50
+      width: 100%
+      pad_left: 4
+      pad_right: 4
+      border_opa: TRANSP
+      bg_opa: TRANSP
+      pad_all: 0
+      clickable: false
+      layout:
+        type: GRID
+        grid_columns: [FR(1), FR(2), FR(17), FR(3)]
+        grid_rows: [100%]
+        pad_column: 0
+      widgets:
+        - label:
+            id: id_lv_lab_fountain_water_level_icon
+            grid_cell_column_pos: 1
+            grid_cell_row_pos: 0
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            align: RIGHT_MID
+            pad_bottom: 1
+            text_align: RIGHT
+            text_color: color_white
+            text_font: mdi_icons_32
+            text: "${water}"
+        - obj:
+            grid_cell_column_pos: 2
+            grid_cell_row_pos: 0
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            align: CENTER
+            pad_top: 6
+            pad_bottom: 8
+            pad_left: 2
+            pad_right: 2
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            widgets:
+              - bar:
+                  id: id_lv_bar_fountain_water_level
+                  width: 100%
+                  min_value: 0
+                  max_value: 100
+        - label:
+            id: id_lv_lab_fountain_water_level_percent
+            grid_cell_column_pos: 3
+            grid_cell_row_pos: 0
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            align: CENTER
+            pad_top: 4
+            text_align: CENTER
+            text_color: color_white
+            text_font: lato_18
+            scrollable: false
+            text: ""
+  - obj:
+      align: TOP_LEFT
+      y: 150
+      height: 50
+      width: 100%
+      pad_left: 4
+      pad_right: 4
+      border_opa: TRANSP
+      bg_opa: TRANSP
+      pad_all: 0
+      layout:
+        type: GRID
+        grid_columns: [FR(1), FR(1)]
+        grid_rows: [100%]
+        pad_column: 40
+      widgets:
+        - button:
+            id: id_lv_but_fountain_reset_filter
+            grid_cell_column_pos: 0
+            grid_cell_row_pos: 0
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            pad_all: 0
+            border_opa: TRANSP
+            bg_opa: 10%
+            clickable: false
+            bg_color: color_bulb_blue
+            press_lock: true
+            on_press:
+              then:
+                - script.execute: id_script_popup_show_fountain_filter
+            widgets:
+              - label:
+                  id: id_lv_lab_fountain_reset_filter
+                  align: CENTER
+                  text_font: lato_18
+                  text_color: color_white
+                  text_align: CENTER
+                  text: "${i18n_reset_filter_button}"
+                  text_opa: 40%
+
+        - button:
+            id: id_lv_but_fountain_reset_clean
+            grid_cell_column_pos: 1
+            grid_cell_row_pos: 0
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            pad_all: 0
+            border_opa: TRANSP
+            bg_opa: 10%
+            clickable: false
+            bg_color: color_bulb_blue
+            press_lock: true
+            on_press:
+              then:
+                - script.execute: id_script_popup_show_fountain_clean
+            widgets:
+              - label:
+                  id: id_lv_lab_fountain_reset_clean
+                  align: CENTER
+                  text_font: lato_18
+                  text_color: color_white
+                  text_align: CENTER
+                  text: "${i18n_reset_cleaning_button}"
+                  text_opa: 40%
