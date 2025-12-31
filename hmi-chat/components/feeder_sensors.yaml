@@ -4,42 +4,11 @@ sensor:
     entity_id: ${feeder_dessi_remain_days_entity}
     on_value:
       then:
-        - if:
-            condition:
-              - sensor.in_range:
-                  id: id_sensor_feeder_dessi_remain_days
-                  above: 3
-            then:
-              - lvgl.button.update:
-                  id: id_lv_but_feeder_reset_dessiccant
-                  clickable: false
-                  #bg_color: color_dark_gray
-                  bg_opa: 10%
-              - lvgl.label.update:
-                  id: id_lv_lab_feeder_reset_dessiccant
-                  text_opa: 40%
-            else:
-              - lvgl.button.update:
-                  id: id_lv_but_feeder_reset_dessiccant
-                  clickable: true
-                  #bg_color: color_bulb_blue
-                  bg_opa: COVER
-              - lvgl.label.update:
-                  id: id_lv_lab_feeder_reset_dessiccant
-                  text_opa: COVER
-        - lvgl.button.update:
-            id: id_lv_but_feeder_reset_dessiccant
-            bg_color: !lambda |-
-              if(x > 3)
-                return id(color_bulb_blue);
-              else if (x > 2)
-                return id(color_green);
-              else if (x > 0)
-                return id(color_yellow);
-              else
-                return id(color_red);
+        - script.stop: id_script_reset_dialog_confirm_execute_feeder_dessiccant
+        - script.execute: id_script_dessicant_reset_button_behavior
         - lvgl.label.update:
             id: id_lv_lab_feeder_dessiccant_days_left
+            hidden: false
             text: !lambda |-
               static char out[20];
 
@@ -51,6 +20,7 @@ sensor:
                 snprintf(out, sizeof(out), "%d jour restant", (int)x);
               else
                 snprintf(out, sizeof(out), "%d jours restants", (int)x);
+              id(id_global_dessicant_string_store) = out; // Store the string in buffer for later use
               return out;
             text_color: !lambda |-
               if(x > 2)
@@ -312,6 +282,10 @@ globals:
     type: bool
     initial_value: 'false'
     restore_value: false
+  - id: id_global_dessicant_string_store
+    type: std::string
+    initial_value: '""'
+    restore_value: false
 
 interval:
   - interval: 1200ms
@@ -337,3 +311,43 @@ interval:
                   - lvgl.button.update:
                       id: id_lv_but_feeder_card
                       shadow_color: color_gray
+
+script:
+  - id: id_script_dessicant_reset_button_behavior
+    mode: single
+    then:
+      - if:
+          condition:
+            - sensor.in_range:
+                id: id_sensor_feeder_dessi_remain_days
+                above: 3
+          then:
+            - lvgl.button.update:
+                id: id_lv_but_feeder_reset_dessiccant
+                clickable: false
+                #bg_color: color_dark_gray
+                bg_opa: 10%
+            - lvgl.label.update:
+                id: id_lv_lab_feeder_reset_dessiccant
+                text_opa: 40%
+          else:
+            - lvgl.button.update:
+                id: id_lv_but_feeder_reset_dessiccant
+                clickable: true
+                #bg_color: color_bulb_blue
+                bg_opa: COVER
+            - lvgl.label.update:
+                id: id_lv_lab_feeder_reset_dessiccant
+                text_opa: COVER
+      - lvgl.button.update:
+          id: id_lv_but_feeder_reset_dessiccant
+          hidden: false
+          bg_color: !lambda |-
+            if(id(id_sensor_feeder_dessi_remain_days).state > 3)
+              return id(color_bulb_blue);
+            else if (id(id_sensor_feeder_dessi_remain_days).state > 2)
+              return id(color_green);
+            else if (id(id_sensor_feeder_dessi_remain_days).state > 0)
+              return id(color_yellow);
+            else
+              return id(color_red);

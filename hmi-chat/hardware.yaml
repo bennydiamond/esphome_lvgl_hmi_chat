@@ -79,6 +79,28 @@ logger:
 #    online_image: WARN
 #    number: WARN
 
+api:
+  actions:
+    - action: confirm_dessiccant_reset_req_received
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_feeder_dessiccant_days_left
+            text: "Attente confirm. Cloud"
+        - lvgl.widget.hide: id_lv_but_feeder_reset_dessiccant
+    - action: confirm_fountain_filter_reset_req_received
+      then:
+        - lvgl.label.update:
+            id: id_lab_fountain_filter_remaining_days
+            text: ${cloud_refresh}
+            text_font: mdi_icons_22
+        - lvgl.widget.hide: id_lv_but_fountain_reset_filter
+    - action: confirm_fountain_clean_reset_req_received
+      then:
+        - lvgl.label.update:
+            id: id_lab_fountain_clean_remaining_days
+            text: ${cloud_refresh}
+            text_font: mdi_icons_22
+        - lvgl.widget.hide: id_lv_but_fountain_reset_clean
 
 http_request:
   verify_ssl: false

@@ -2,6 +2,11 @@
   id: lato_14
   size: 14
   bpp: 4
+  extras:
+    - file: "hmi-chat/fonts/Roboto-Regular.ttf"
+      glyphs: [
+        é,
+      ]
 
 - file: "hmi-chat/fonts/Roboto-Regular.ttf"
   id: lato_18
@@ -109,6 +114,15 @@
     "\U000F0922", # mdi-wifi-strength-2
     "\U000F0925", # mdi-wifi-strength-3
     "\U000F0928", # mdi-wifi-strength-4
+    "\U000F1BFC", # mdi-cloud-refresh-variant-outline
+  ]
+
+- file: "hmi-chat/fonts/materialdesignicons-webfont.ttf"
+  id: mdi_icons_22
+  size: 22
+  bpp: 4
+  glyphs: [
+    "\U000F1BFC", # mdi-cloud-refresh-variant-outline
   ]
 
 - file: "hmi-chat/fonts/materialdesignicons-webfont.ttf"

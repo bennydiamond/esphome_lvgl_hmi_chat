@@ -39,48 +39,19 @@ sensor:
     entity_id: ${fountain_clean_remaining_days_entity}
     on_value:
       then:
-        - if:
-            condition:
-              - sensor.in_range:
-                  id: id_sensor_fountain_cleaning_remaining_days
-                  above: 3
-            then:
-              - lvgl.button.update:
-                  id: id_lv_but_fountain_reset_clean
-                  clickable: false
-                  #bg_color: color_dark_gray
-                  bg_opa: 10%
-              - lvgl.label.update:
-                  id: id_lv_lab_fountain_reset_clean
-                  text_opa: 40%
-            else:
-              - lvgl.button.update:
-                  id: id_lv_but_fountain_reset_clean
-                  clickable: true
-                  #bg_color: color_bulb_blue
-                  bg_opa: COVER
-              - lvgl.label.update:
-                  id: id_lv_lab_fountain_reset_clean
-                  text_opa: COVER
-        - lvgl.button.update:
-            id: id_lv_but_fountain_reset_clean
-            bg_color: !lambda |-
-              if(x > 3)
-                return id(color_bulb_blue);
-              else if (x > 2)
-                return id(color_green);
-              else if (x > 0)
-                return id(color_yellow);
-              else
-                return id(color_red);
+        - script.stop: id_script_reset_dialog_confirm_execute_fountain_clean
+        - script.execute: id_script_cleaning_reset_button_behavior
         - lvgl.label.update:
             id: id_lab_fountain_clean_remaining_days
+            hidden: false
+            text_font: lato_18
             text: !lambda |-
               static char out[12];
               if(x <= 1)
                 snprintf(out, sizeof(out), "%d jour", (int)x);
               else
                 snprintf(out, sizeof(out), "%d jours", (int)x);
+              id(id_global_cleaning_string_store) = out; // Store the string in buffer for later use
               return out;
             text_color: !lambda |-
               if(x > 2)
@@ -94,48 +65,19 @@ sensor:
     entity_id: ${fountain_filter_remaining_days_entity}
     on_value:
       then:
-        - if:
-            condition:
-              - sensor.in_range:
-                  id: id_sensor_fountain_filter_remaining_days
-                  above: 3
-            then:
-              - lvgl.button.update:
-                  id: id_lv_but_fountain_reset_filter
-                  clickable: false
-                  #bg_color: color_dark_gray
-                  bg_opa: 10%
-              - lvgl.label.update:
-                  id: id_lv_lab_fountain_reset_filter
-                  text_opa: 40%
-            else:
-              - lvgl.button.update:
-                  id: id_lv_but_fountain_reset_filter
-                  clickable: true
-                  #bg_color: color_bulb_blue
-                  bg_opa: COVER
-              - lvgl.label.update:
-                  id: id_lv_lab_fountain_reset_filter
-                  text_opa: COVER
-        - lvgl.button.update:
-            id: id_lv_but_fountain_reset_filter
-            bg_color: !lambda |-
-              if(x > 3)
-                return id(color_bulb_blue);
-              else if (x > 2)
-                return id(color_green);
-              else if (x > 0)
-                return id(color_yellow);
-              else
-                return id(color_red);
+        - script.stop: id_script_reset_dialog_confirm_execute_fountain_filter
+        - script.execute: id_script_filter_reset_button_behavior
         - lvgl.label.update:
             id: id_lab_fountain_filter_remaining_days
+            hidden: false
+            text_font: lato_18
             text: !lambda |-
               static char out[12];
               if(x <= 1)
                 snprintf(out, sizeof(out), "%d jour", (int)x);
               else
                 snprintf(out, sizeof(out), "%d jours", (int)x);
+              id(id_global_filter_string_store) = out; // Store the string in buffer for later use
               return out;
             text_color: !lambda |-
               if(x > 2)
@@ -351,6 +293,14 @@ globals:
     type: bool
     initial_value: 'false'
     restore_value: false
+  - id: id_global_cleaning_string_store
+    type: std::string
+    initial_value: '""'
+    restore_value: false
+  - id: id_global_filter_string_store
+    type: std::string
+    initial_value: '""'
+    restore_value: false
 
 interval:
   - interval: 1200ms
@@ -376,3 +326,81 @@ interval:
                   - lvgl.button.update:
                       id: id_lv_but_fountain_card
                       shadow_color: color_gray
+
+script:
+  - id: id_script_cleaning_reset_button_behavior
+    mode: single
+    then:
+      - if:
+          condition:
+            - sensor.in_range:
+                id: id_sensor_fountain_cleaning_remaining_days
+                above: 3
+          then:
+            - lvgl.button.update:
+                id: id_lv_but_fountain_reset_clean
+                clickable: false
+                #bg_color: color_dark_gray
+                bg_opa: 10%
+            - lvgl.label.update:
+                id: id_lv_lab_fountain_reset_clean
+                text_opa: 40%
+          else:
+            - lvgl.button.update:
+                id: id_lv_but_fountain_reset_clean
+                clickable: true
+                #bg_color: color_bulb_blue
+                bg_opa: COVER
+            - lvgl.label.update:
+                id: id_lv_lab_fountain_reset_clean
+                text_opa: COVER
+      - lvgl.button.update:
+          id: id_lv_but_fountain_reset_clean
+          hidden: false
+          bg_color: !lambda |-
+            if(id(id_sensor_fountain_cleaning_remaining_days).state > 3)
+              return id(color_bulb_blue);
+            else if (id(id_sensor_fountain_cleaning_remaining_days).state > 2)
+              return id(color_green);
+            else if (id(id_sensor_fountain_cleaning_remaining_days).state > 0)
+              return id(color_yellow);
+            else
+              return id(color_red);
+  - id: id_script_filter_reset_button_behavior
+    mode: single
+    then:
+      - if:
+          condition:
+            - sensor.in_range:
+                id: id_sensor_fountain_filter_remaining_days
+                above: 3
+          then:
+            - lvgl.button.update:
+                id: id_lv_but_fountain_reset_filter
+                clickable: false
+                #bg_color: color_dark_gray
+                bg_opa: 10%
+            - lvgl.label.update:
+                id: id_lv_lab_fountain_reset_filter
+                text_opa: 40%
+          else:
+            - lvgl.button.update:
+                id: id_lv_but_fountain_reset_filter
+                clickable: true
+                #bg_color: color_bulb_blue
+                bg_opa: COVER
+            - lvgl.label.update:
+                id: id_lv_lab_fountain_reset_filter
+                text_opa: COVER
+      - lvgl.button.update:
+          id: id_lv_but_fountain_reset_filter
+          hidden: false
+          bg_color: !lambda |-
+            if(id(id_sensor_fountain_filter_remaining_days).state > 3)
+              return id(color_bulb_blue);
+            else if (id(id_sensor_fountain_filter_remaining_days).state > 2)
+              return id(color_green);
+            else if (id(id_sensor_fountain_filter_remaining_days).state > 0)
+              return id(color_yellow);
+            else
+              return id(color_red);

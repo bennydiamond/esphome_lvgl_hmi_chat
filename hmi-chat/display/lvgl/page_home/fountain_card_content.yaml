@@ -52,10 +52,10 @@ widgets:
             align: CENTER
             bg_opa: TRANSP
             long_mode: WRAP
-            text_font: lato_18
+            text_font: mdi_icons_22
             text_color: color_white
             text_align: LEFT
-            text: ""
+            text: ${cloud_refresh}
         - label:
             grid_cell_column_pos: 0
             grid_cell_row_pos: 1
@@ -78,10 +78,10 @@ widgets:
             align: CENTER
             bg_opa: TRANSP
             long_mode: WRAP
-            text_font: lato_18
+            text_font: mdi_icons_22
             text_color: color_white
             text_align: LEFT
-            text: ""
+            text: ${cloud_refresh}
   - obj:
       align: TOP_LEFT
       y: 100

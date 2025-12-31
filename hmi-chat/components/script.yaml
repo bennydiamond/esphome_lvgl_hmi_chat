@@ -18,20 +18,11 @@ script:
           data:
             message: button_fountain_reset_filter
       - delay: 75s
-      - if:
-          condition:
-            not:
-              - sensor.in_range:
-                  id: id_sensor_fountain_filter_remaining_days
-                  above: 3
-          then:
-            - lvgl.button.update:
-                id: id_lv_but_fountain_reset_filter
-                clickable: true
-                bg_opa: COVER
-            - lvgl.label.update:
-                id: id_lv_lab_fountain_reset_filter
-                text_opa: COVER
+      - script.execute: id_script_filter_reset_button_behavior
+      - lvgl.label.update:
+          id: id_lab_fountain_filter_remaining_days
+          text: !lambda 'return id(id_global_filter_string_store).c_str();'
+          text_font: lato_18
 
   - id: id_script_reset_dialog_confirm_execute_fountain_clean
     mode: single
@@ -41,20 +32,11 @@ script:
           data:
             message: button_fountain_reset_clean
       - delay: 75s
-      - if:
-          condition:
-            not:
-              - sensor.in_range:
-                  id: id_sensor_fountain_cleaning_remaining_days
-                  above: 3
-          then:
-            - lvgl.button.update:
-                id: id_lv_but_fountain_reset_clean
-                clickable: true
-                bg_opa: COVER
-            - lvgl.label.update:
-                id: id_lv_lab_fountain_reset_clean
-                text_opa: COVER
+      - script.execute: id_script_cleaning_reset_button_behavior
+      - lvgl.label.update:
+          id: id_lab_fountain_clean_remaining_days
+          text: !lambda 'return id(id_global_cleaning_string_store).c_str();'
+          text_font: lato_18
 
   - id: id_script_reset_dialog_confirm_execute_feeder_dessiccant
     mode: single
@@ -64,20 +46,11 @@ script:
           data:
             message: button_feeder_reset_dessiccant
       - delay: 75s
-      - if:
-          condition:
-            not:
-              - sensor.in_range:
-                  id: id_sensor_feeder_dessi_remain_days
-                  above: 3
-          then:
-            - lvgl.button.update:
-                id: id_lv_but_feeder_reset_dessiccant
-                clickable: true
-                bg_opa: COVER
-            - lvgl.label.update:
-                id: id_lv_lab_feeder_reset_dessiccant
-                text_opa: COVER
+      - script.execute: id_script_dessicant_reset_button_behavior
+      - lvgl.label.update:
+          id: id_lv_lab_feeder_dessiccant_days_left
+          text: !lambda 'return id(id_global_dessicant_string_store).c_str();'
+          text_font: lato_18
 
   # Generic popup routing script (action button)
   - id: id_script_popup_action_execute

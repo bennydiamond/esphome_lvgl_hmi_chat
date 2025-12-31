@@ -16,6 +16,7 @@ arrow_down:         "\U000F0045" # mdi-arrow-down
 water:              "\U000F058C" # mdi-water
 water_alert:        "\U000F1502" # mdi-water-alert
 food_drumstick:     "\U000F141F" # mdi-food-drumstick
+cloud_refresh:      "\U000F1BFC" # mdi-cloud-refresh-variant-outline
 
 ha_instance_url: "http://192.168.0.250:8123"
 # token is valid for 10 years (2025-02-15)

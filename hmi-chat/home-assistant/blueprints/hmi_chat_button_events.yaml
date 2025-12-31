@@ -2,7 +2,7 @@ blueprint:
   name: HMI Chat - Button Events (Blueprint)
   description: |-
     Handle ESPHome HMI events and map them to Petlibro actions.
-    Version: 1.0.0 (2025-12-30)
+    Version: 1.0.1 (2025-12-30)
   domain: automation
   source_url: https://raw.githubusercontent.com/bennydiamond/esphome_lvgl_hmi_chat/main/hmi-chat/home-assistant/blueprints/automation/hmi_chat_button_events.yaml
   homeassistant:
@@ -44,6 +44,7 @@ blueprint:
         entity:
           domain: button
 
+
 trigger:
   - platform: event
     event_type: esphome.button_pressed
@@ -53,6 +54,13 @@ trigger:
     event_type: esphome.set_entity_value
     event_data:
       device_id: !input hmi_device
+
+variables:
+  device_id: !input hmi_device
+  esphome_node_service_prefix: "{{ 'esphome.' ~ device_attr(device_id, 'name') | lower | replace(' ', '_') | replace('-', '_') }}"
+  ack_dessiccant_service: "{{ esphome_node_service_prefix ~ '_confirm_dessiccant_reset_req_received' }}"
+  ack_filter_service: "{{ esphome_node_service_prefix ~ '_confirm_fountain_filter_reset_req_received' }}"
+  ack_clean_service: "{{ esphome_node_service_prefix ~ '_confirm_fountain_clean_reset_req_received' }}"
 
 condition: []
 
@@ -129,6 +137,7 @@ action:
           - service: button.press
             target:
               entity_id: !input feeder_dessiccant_replaced_button
+          - service: "{{ ack_dessiccant_service }}"
 
       - conditions:
           - alias: Si reset filtre fontaine confirmé
@@ -140,6 +149,7 @@ action:
           - service: button.press
             target:
               entity_id: !input fountain_filter_reset_button
+          - service: "{{ ack_filter_service }}"
 
       - conditions:
           - alias: Si reset nettoyage fontaine confirmé
@@ -151,5 +161,6 @@ action:
           - service: button.press
             target:
               entity_id: !input fountain_cleaning_reset_button
+          - service: "{{ ack_clean_service }}"
 
 mode: single
