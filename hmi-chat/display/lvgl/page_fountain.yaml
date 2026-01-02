@@ -125,6 +125,15 @@ lvgl:
                         options:
                         - "En continu"
                         - "Intermittente"
+                        on_value:
+                          then:
+                            - homeassistant.event:
+                                event: esphome.select_changed
+                                data:
+                                  message: select_fountain_dispensing_mode_changed
+                                data_template:
+                                  selected_option: !lambda 'return x;'
+                            
               - button:
                   x: 0
                   y: 0
