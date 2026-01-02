@@ -117,14 +117,27 @@ lvgl:
                     - dropdown:
                         id: id_lv_dropdown_fountain_dispensing_mode
                         align: TOP_RIGHT
-                        width: 150
+                        width: 170
                         grid_cell_x_align: END
                         text_font: lato_18
+                        dir: TOP # Unroll dropdown upwards to avoid being cut off
+                        dropdown_list:
+                          text_font: lato_24
+                          text_line_space: 24
                         indicator:
                           text_font: montserrat_18
                         options:
                         - "En continu"
                         - "Intermittente"
+                        on_value:
+                          then:
+                            - homeassistant.event:
+                                event: esphome.select_changed
+                                data:
+                                  message: select_fountain_dispensing_mode_changed
+                                data_template:
+                                  selected_option: !lambda 'return x;'
+                            
               - button:
                   x: 0
                   y: 0

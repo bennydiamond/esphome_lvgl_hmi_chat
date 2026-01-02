@@ -2,7 +2,7 @@ blueprint:
   name: HMI Chat - Button Events (Blueprint)
   description: |-
     Handle ESPHome HMI events and map them to Petlibro actions.
-    Version: 1.0.1 (2025-12-30)
+    Version: 1.0.2 (2026-01-01)
   domain: automation
   source_url: https://raw.githubusercontent.com/bennydiamond/esphome_lvgl_hmi_chat/main/hmi-chat/home-assistant/blueprints/automation/hmi_chat_button_events.yaml
   homeassistant:
@@ -43,6 +43,12 @@ blueprint:
       selector:
         entity:
           domain: button
+    fountain_dispensing_mode_select:
+      name: Fountain dispensing mode select
+      description: Home Assistant select entity for fountain water dispensing mode.
+      selector:
+        entity:
+          domain: select
 
 
 trigger:
@@ -54,6 +60,10 @@ trigger:
     event_type: esphome.set_entity_value
     event_data:
       device_id: !input hmi_device
+  - platform: event
+    event_type: esphome.select_changed
+    event_data:
+      device_id: !input hmi_device
 
 variables:
   device_id: !input hmi_device
@@ -61,6 +71,7 @@ variables:
   ack_dessiccant_service: "{{ esphome_node_service_prefix ~ '_confirm_dessiccant_reset_req_received' }}"
   ack_filter_service: "{{ esphome_node_service_prefix ~ '_confirm_fountain_filter_reset_req_received' }}"
   ack_clean_service: "{{ esphome_node_service_prefix ~ '_confirm_fountain_clean_reset_req_received' }}"
+  fountain_dispensing_mode_select_entity: !input fountain_dispensing_mode_select
 
 condition: []
 
@@ -126,6 +137,20 @@ action:
               option: "{{ trigger.event.data.value }}"
             target:
               entity_id: !input feeder_manual_feed_quantity_select
+
+      - conditions:
+          - alias: Si le mode de distribution changé
+            condition: template
+            value_template: >-
+              {{ trigger.event.event_type == 'esphome.select_changed' and
+                 trigger.event.data.message == 'select_fountain_dispensing_mode_changed' and
+                 ((now() - trigger.event.time_fired).total_seconds() < 3) }}
+        sequence:
+          - service: select.select_option
+            target:
+              entity_id: !input fountain_dispensing_mode_select
+            data:
+              option: "{{ state_attr(fountain_dispensing_mode_select_entity, 'options')[ (trigger.event.data.selected_option | int) ] }}"
 
       - conditions:
           - alias: Si reset dessiccant confirmé
