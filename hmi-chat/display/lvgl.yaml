@@ -1,10 +1,51 @@
 packages:
   page_home: !include lvgl/page_home.yaml
-  page_feeder: !include lvgl/page_feeder.yaml
   page_fountain: !include lvgl/page_fountain.yaml
   page_settings: !include lvgl/page_settings.yaml
   notification_area_sensors: !include notification_area_sensors.yaml
+  feeder_la_ptite_crisse: !include
+    file: lvgl/feeder_package.yaml
+    vars:
+      f_id: feeder1
+      f_img_id: id_img_feeder1
+      ha_ent_device_sn: sensor.mangeoire_de_la_p_tite_crisse_device_sn
+      ha_ent_mac_address: sensor.mangeoire_de_la_p_tite_crisse_mac_address
+      ha_ent_wifi_ssid: sensor.mangeoire_de_la_p_tite_crisse_wi_fi_ssid
+      ha_ent_wifi_signal: sensor.mangeoire_de_la_p_tite_crisse_wi_fi_signal_strength
+      ha_ent_dessi_remain_days: sensor.mangeoire_de_la_p_tite_crisse_desiccant_remaining_days
+      ha_ent_batt_status: binary_sensor.mangeoire_de_la_p_tite_crisse_battery_status
+      ha_ent_dispenser_status: binary_sensor.mangeoire_de_la_p_tite_crisse_food_dispenser
+      ha_ent_food_status: binary_sensor.mangeoire_de_la_p_tite_crisse_food_status
+      ha_ent_lid_status: binary_sensor.mangeoire_de_la_p_tite_crisse_lid_status
+      ha_ent_feeding_plan_active: binary_sensor.mangeoire_de_la_p_tite_crisse_feeding_schedule
+      ha_ent_wifi_connected: binary_sensor.mangeoire_de_la_p_tite_crisse_wi_fi
+      ha_ent_general_issue: binary_sensor.problemes_mangeoire_de_la_tite_crisse
+      ha_ent_manual_feed_qty: select.mangeoire_de_la_p_tite_crisse_manual_feed_quantity
+      ha_ent_issue_list: sensor.liste_problemes_mangeoire_de_la_tite_crisse
+      ha_ent_last_feed_time: sensor.mangeoire_de_la_petite_crisse_derniere_distribution
+      ha_ent_next_feed_time: sensor.mangeoire_de_la_petite_crisse_prochaine_distribution
 
+  feeder_miss_puke: !include
+    file: lvgl/feeder_package.yaml
+    vars:
+      f_id: feeder2
+      f_img_id: id_img_feeder2
+      ha_ent_device_sn: sensor.mangeoire_a_miss_puke_device_sn
+      ha_ent_mac_address: sensor.mangeoire_a_miss_puke_mac_address
+      ha_ent_wifi_ssid: sensor.mangeoire_a_miss_puke_wi_fi_ssid
+      ha_ent_wifi_signal: sensor.mangeoire_a_miss_puke_wi_fi_signal_strength
+      ha_ent_dessi_remain_days: sensor.mangeoire_a_miss_puke_desiccant_remaining_days
+      ha_ent_batt_status: binary_sensor.mangeoire_a_miss_puke_battery_status
+      ha_ent_dispenser_status: binary_sensor.mangeoire_a_miss_puke_food_dispenser
+      ha_ent_food_status: binary_sensor.mangeoire_a_miss_puke_food_status
+      ha_ent_lid_status: binary_sensor.mangeoire_a_miss_puke_lid_status
+      ha_ent_feeding_plan_active: binary_sensor.mangeoire_a_miss_puke_feeding_schedule
+      ha_ent_wifi_connected: binary_sensor.mangeoire_a_miss_puke_wi_fi
+      ha_ent_general_issue: binary_sensor.problemes_mangeoire_de_miss_puke
+      ha_ent_manual_feed_qty: select.mangeoire_a_miss_puke_manual_feed_quantity
+      ha_ent_issue_list: sensor.liste_problemes_mangeoire_de_miss_puke
+      ha_ent_last_feed_time: sensor.mangeoire_de_miss_puke_derniere_distribution
+      ha_ent_next_feed_time: sensor.mangeoire_de_miss_puke_prochaine_distribution
 
 font: !include fonts.yaml
 image: !include images.yaml
@@ -46,9 +87,7 @@ interval:
             lv_label_set_text(id(id_lv_lab_wifi_info_text), combined.c_str());
           }
 
-lvgl:
-  disp_bg_image: none
-            
+lvgl:            
   top_layer: # Top Screen Status bar. Visible on all pages.
     widgets:
       # Top notification area delimiter line
@@ -57,5 +96,14 @@ lvgl:
       - <<: !include lvgl/top_layer/popup_generic.yaml
       # Catstuff problem popup (single close button)
       - <<: !include lvgl/top_layer/popup_catstuff.yaml
-      # Feeder manual quantity popup (roller + close)
-      - <<: !include lvgl/top_layer/popup_feeder_manual_quantity.yaml
+      # Feeder 1 manual quantity popup
+      - <<: !include 
+          file: lvgl/top_layer/popup_feeder_manual_quantity.yaml
+          vars:
+            f_id: feeder1
+
+      # Feeder 2 manual quantity popup
+      - <<: !include 
+          file: lvgl/top_layer/popup_feeder_manual_quantity.yaml
+          vars:
+            f_id: feeder2

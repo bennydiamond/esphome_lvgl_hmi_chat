@@ -1,0 +1,499 @@
+# feeder_package.yaml
+globals:
+  - id: id_global_bool_${f_id}_problems_blinker
+    type: bool
+    initial_value: 'false'
+    restore_value: false
+  - id: id_global_${f_id}_dessicant_string_store
+    type: std::string
+    initial_value: '""'
+    restore_value: false
+
+api:
+  actions:
+    - action: confirm_${f_id}_dessiccant_reset_req_received
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_dessiccant_days_left
+            text: "Attente confirm. Cloud"
+        - lvgl.widget.hide: id_lv_but_${f_id}_reset_dessiccant
+        
+script:
+  - id: id_script_dessicant_reset_button_behavior_${f_id}
+    mode: single
+    then:
+      - if:
+          condition:
+            - sensor.in_range:
+                id: id_sensor_${f_id}_dessi_remain_days
+                above: 3
+          then:
+            - lvgl.button.update:
+                id: id_lv_but_${f_id}_reset_dessiccant
+                clickable: false
+                bg_opa: 10%
+            - lvgl.label.update:
+                id: id_lv_lab_${f_id}_reset_dessiccant
+                text_opa: 40%
+          else:
+            - lvgl.button.update:
+                id: id_lv_but_${f_id}_reset_dessiccant
+                clickable: true
+                bg_opa: COVER
+            - lvgl.label.update:
+                id: id_lv_lab_${f_id}_reset_dessiccant
+                text_opa: COVER
+      - lvgl.button.update:
+          id: id_lv_but_${f_id}_reset_dessiccant
+          hidden: false
+          bg_color: !lambda |-
+            if(id(id_sensor_${f_id}_dessi_remain_days).state > 3)
+              return id(color_bulb_blue);
+            else if (id(id_sensor_${f_id}_dessi_remain_days).state > 2)
+              return id(color_green);
+            else if (id(id_sensor_${f_id}_dessi_remain_days).state > 0)
+              return id(color_yellow);
+            else
+              return id(color_red);
+
+  - id: id_script_reset_dialog_confirm_execute_${f_id}_dessiccant
+    mode: single
+    then:
+      - homeassistant.event:
+          event: esphome.button_pressed
+          data:
+            message: button_${f_id}_reset_dessiccant
+      - delay: 75s
+      - script.execute: id_script_dessicant_reset_button_behavior_${f_id}
+      - lvgl.label.update:
+          id: id_lv_lab_${f_id}_dessiccant_days_left
+          text: !lambda 'return id(id_global_${f_id}_dessicant_string_store).c_str();'
+          text_font: lato_18
+
+  - id: id_script_popup_show_${f_id}_dessiccant
+    mode: single
+    then:
+      - lvgl.label.update:
+          id: id_lv_popup_generic_title
+          text: "${i18n_reset_dessiccant_button}"
+      - lvgl.label.update:
+          id: id_lv_popup_generic_message
+          text: "${i18n_confirm_reset_dessiccant}"
+      - lvgl.label.update:
+          id: id_lv_popup_generic_action_label
+          text: "${i18n_confirm}"
+      - lambda: |-
+          std::string feeder_id = "${f_id}";
+          if (feeder_id == "feeder1") id(popup_action) = 1;
+          else if (feeder_id == "feeder2") id(popup_action) = 4;
+      - lvgl.widget.show: id_lv_popup_generic_overlay
+
+interval:
+  - interval: 1200ms
+    then:
+      - if:
+          condition:
+            binary_sensor.is_on: id_binary_sensor_${f_id}_general_issue
+          then:
+            - if:
+                condition:
+                  - lambda: return id(id_global_bool_${f_id}_problems_blinker) == true;
+                then:
+                  - globals.set:
+                      id: id_global_bool_${f_id}_problems_blinker
+                      value: 'false'
+                  - lvgl.button.update:
+                      id: id_lv_but_${f_id}_card
+                      shadow_color: color_red
+                else:
+                  - globals.set:
+                      id: id_global_bool_${f_id}_problems_blinker
+                      value: 'true'
+                  - lvgl.button.update:
+                      id: id_lv_but_${f_id}_card
+                      shadow_color: color_gray
+
+sensor:
+  - platform: homeassistant
+    id: id_sensor_${f_id}_dessi_remain_days
+    entity_id: ${ha_ent_dessi_remain_days}
+    on_value:
+      then:
+        - script.stop: id_script_reset_dialog_confirm_execute_${f_id}_dessiccant
+        - script.execute: id_script_dessicant_reset_button_behavior_${f_id}
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_dessiccant_days_left
+            hidden: false
+            text: !lambda |-
+              static char out[20];
+              if(x < -1) snprintf(out, sizeof(out), "%d jours en retard", (int)x);
+              else if(x == -1) snprintf(out, sizeof(out), "%d jour en retard", (int)x);
+              else if(x <= 1) snprintf(out, sizeof(out), "%d jour restant", (int)x);
+              else snprintf(out, sizeof(out), "%d jours restants", (int)x);
+              id(id_global_${f_id}_dessicant_string_store) = out;
+              return out;
+            text_color: !lambda |-
+              if(x > 2) return id(color_green);
+              else if (x > 0) return id(color_yellow);
+              else return id(color_red);
+
+  - platform: homeassistant
+    id: id_sensor_${f_id}_wifi_signal
+    entity_id: ${ha_ent_wifi_signal}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_wifi_icon
+            text_color: !lambda |-
+              if (x < 0) return lv_color_hex(0x00FF00);
+              return lv_color_hex(0x333333);
+            text: !lambda |-
+              if (x <= -80) return "${wifi_25}";
+              else if (x > -80 && x <= -70) return "${wifi_50}";
+              else if (x > -70 && x <= -60) return "${wifi_75}";
+              return "${wifi_100}";
+
+text_sensor:
+  - platform: homeassistant
+    id: id_text_sensor_${f_id}_device_sn
+    entity_id: ${ha_ent_device_sn}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_device_sn
+            text: !lambda 'std::string prefix = "SN: "; return (prefix + x).c_str();'
+            text_color: color_white
+  - platform: homeassistant
+    id: id_text_sensor_${f_id}_mac_address
+    entity_id: ${ha_ent_mac_address}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_mac_address
+            text: !lambda 'std::string prefix = "MAC: "; return (prefix + x).c_str();'
+            text_color: color_white
+  - platform: homeassistant
+    id: id_text_sensor_${f_id}_wifi_ssid
+    entity_id: ${ha_ent_wifi_ssid}
+    on_value:
+      then:
+        - if:
+            condition:
+              - binary_sensor.is_on: id_binary_sensor_${f_id}_wifi_connected
+            then:
+              - lvgl.label.update:
+                  id: id_lv_lab_${f_id}_wifi_ssid
+                  text: !lambda 'std::string prefix = "Wi-Fi: "; return (prefix + x).c_str();'
+                  text_color: color_white
+            else:
+              - lvgl.label.update:
+                  id: id_lv_lab_${f_id}_wifi_ssid
+                  text: "${i18n_wifi_disconnected}"
+                  text_color: color_white
+  - platform: homeassistant
+    id: id_text_sensor_${f_id}_manual_feed_quantity
+    entity_id: ${ha_ent_manual_feed_qty}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_manual_feed_portion_display
+            text: !lambda return x.c_str();
+        - lvgl.roller.update:
+            id: id_lv_roller_${f_id}_manual_quantity
+            selected_text: !lambda return x.c_str();
+            animated: true
+  - platform: homeassistant
+    id: id_text_sensor_${f_id}_issue_list
+    entity_id: ${ha_ent_issue_list}
+    filters:
+      - lambda: |-
+            const size_t max_length = 300;
+            if(x != "OK") {
+              std::string str = x;
+              if (str.length() > max_length) return str.substr(0, max_length);
+              return str;
+            } else {
+              return std::string("");
+            }
+  - platform: homeassistant
+    id: id_text_sensor_${f_id}_last_feed_time
+    entity_id: ${ha_ent_last_feed_time}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_status_last_feed_time
+            text: !lambda 'std::string prefix = "Dernière distrib.: "; return (prefix + x).c_str();'
+            text_color: color_white
+  - platform: homeassistant
+    id: id_text_sensor_${f_id}_next_feed_time
+    entity_id: ${ha_ent_next_feed_time}
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_status_next_feed_time
+            text: !lambda 'std::string prefix = "Prochaine distrib.: "; return (prefix + x).c_str();'
+            text_color: color_white
+
+binary_sensor:
+  - platform: homeassistant
+    id: id_binary_sensor_${f_id}_batt_status
+    entity_id: ${ha_ent_batt_status}
+    trigger_on_initial_state: true
+    on_press:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_status_battery
+            text: "${i18n_battery_status_low}"
+            text_color: color_red
+    on_release:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_status_battery
+            text: "${i18n_battery_status_ok}"
+            text_color: color_green
+  - platform: homeassistant
+    id: id_binary_sensor_${f_id}_dispenser_status
+    entity_id: ${ha_ent_dispenser_status}
+    trigger_on_initial_state: true
+    on_press:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_status_dispenser
+            text: "${i18n_dispenser_status_problem}"
+            text_color: color_red
+    on_release:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_status_dispenser
+            text: "${i18n_dispenser_status_ok}"
+            text_color: color_green
+  - platform: homeassistant
+    id: id_binary_sensor_${f_id}_food_status
+    entity_id: ${ha_ent_food_status}
+    trigger_on_initial_state: true
+    on_press:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_status_food
+            text: "${i18n_food_status_low_problem}"
+            text_color: color_red
+        - lvgl.widget.show: id_lv_but_food_alert 
+    on_release:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_status_food
+            text: "${i18n_food_status_ok}"
+            text_color: color_green
+        - lvgl.widget.hide: id_lv_but_food_alert
+  - platform: homeassistant
+    id: id_binary_sensor_${f_id}_lid_status
+    entity_id: ${ha_ent_lid_status}
+    trigger_on_initial_state: true
+    on_press:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_status_lid
+            text: "${i18n_lid_status_problem}"
+            text_color: color_red
+    on_release:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_status_lid
+            text: "${i18n_lid_status_ok}"
+            text_color: color_green
+  - platform: homeassistant
+    id: id_binary_sensor_${f_id}_feeding_plan_active
+    entity_id: ${ha_ent_feeding_plan_active}
+    trigger_on_initial_state: true
+    on_press:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_feeding_plan_status
+            text: "${i18n_feeding_plan_active}"
+            text_color: color_green
+    on_release:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_feeding_plan_status
+            text: "${i18n_feeding_plan_inactive}"
+            text_color: color_red
+  - platform: homeassistant
+    id: id_binary_sensor_${f_id}_general_issue
+    entity_id: ${ha_ent_general_issue}
+    on_release:
+      then:
+        - lvgl.button.update:
+            id: id_lv_but_${f_id}_card
+            shadow_color: color_gray
+  - platform: homeassistant
+    id: id_binary_sensor_${f_id}_wifi_connected
+    entity_id: ${ha_ent_wifi_connected}
+    on_release:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_wifi_icon
+            text: "\U000F092F"
+            text_color: color_gray
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_wifi_ssid
+            text: "${i18n_wifi_disconnected}"
+            text_color: color_white
+    on_press:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_wifi_icon
+            text_color: color_white
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_wifi_ssid
+            text: !lambda |-
+              std::string prefix = "Wi-Fi: ";
+              std::string ssid = id(id_text_sensor_${f_id}_wifi_ssid).state;
+              return (prefix + ssid).c_str();
+            text_color: color_white
+
+lvgl:
+  pages:
+    - id: page_${f_id}
+      skip: False
+      bg_color: color_black
+      scrollable: False
+      widgets:
+        - obj:
+            y: 43
+            width: 320
+            height: 437
+            align: TOP_LEFT
+            pad_all: 0
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            scrollbar:
+              bg_opa: TRANSP
+            widgets:
+              - image:
+                  align: TOP_LEFT
+                  x: 10
+                  y: 10
+                  src: ${f_img_id}
+              - label:
+                  align: TOP_RIGHT
+                  x: -10
+                  y: 8
+                  width: 230
+                  text_font: lato_14
+                  text_color: color_white
+                  long_mode: SCROLL
+                  text_align: RIGHT
+                  id: id_lv_lab_${f_id}_device_sn
+                  text: "${i18n_sn_placeholder}"
+              - label:
+                  align: TOP_RIGHT
+                  x: -6
+                  y: 51
+                  text_font: mdi_icons_18
+                  text_color: color_white
+                  id: id_lv_lab_${f_id}_wifi_icon
+                  text: "\U000F092F"
+              - label:
+                  align: TOP_RIGHT
+                  x: -30
+                  y: 52
+                  width: 210
+                  text_font: lato_14
+                  text_color: color_white
+                  long_mode: SCROLL
+                  text_align: RIGHT
+                  id: id_lv_lab_${f_id}_wifi_ssid
+                  text: "${i18n_wifi_placeholder}"
+              - label:
+                    align: TOP_RIGHT
+                    x: -10
+                    y: 30
+                    width: 230
+                    text_font: lato_14
+                    text_color: color_white
+                    long_mode: SCROLL
+                    text_align: RIGHT
+                    id: id_lv_lab_${f_id}_mac_address
+                    text: "${i18n_mac_placeholder}"
+              - obj:
+                  align: TOP_LEFT
+                  x: 10
+                  y: 80
+                  width: 300
+                  height: 260
+                  bg_opa: TRANSP
+                  border_opa: TRANSP
+                  pad_all: 0
+                  scrollable: False
+                  layout:
+                    type: GRID
+                    grid_columns: [100%]
+                    grid_rows: [FR(1), FR(1), FR(1), FR(1), FR(1), FR(1), FR(1)]
+                    pad_row: 4
+                  widgets:
+                    - label:
+                        align: LEFT_MID
+                        text_font: lato_18
+                        text_color: color_white
+                        id: id_lv_lab_${f_id}_status_battery
+                        text: "${i18n_battery_status_placeholder}"
+                    - label:
+                        align: LEFT_MID
+                        text_font: lato_18
+                        text_color: color_white
+                        id: id_lv_lab_${f_id}_status_dispenser
+                        text: "${i18n_dispenser_status_placeholder}"
+                    - label:
+                        align: LEFT_MID
+                        text_font: lato_18
+                        text_color: color_white
+                        id: id_lv_lab_${f_id}_status_food
+                        text: "${i18n_food_status_placeholder}"
+                    - label:
+                        align: LEFT_MID
+                        text_font: lato_18
+                        text_color: color_white
+                        id: id_lv_lab_${f_id}_status_lid
+                        text: "${i18n_lid_status_placeholder}"
+                    - label:
+                        align: LEFT_MID
+                        text_font: lato_18
+                        text_color: color_white
+                        id: id_lv_lab_${f_id}_feeding_plan_status
+                        text: "${i18n_feeding_plan_placeholder}"
+                    - label:
+                        align: LEFT_MID
+                        text_font: lato_18
+                        text_color: color_white
+                        id: id_lv_lab_${f_id}_status_last_feed_time
+                        text: "${i18n_last_feed_placeholder}"
+                    - label:
+                        align: LEFT_MID
+                        text_font: lato_18
+                        text_color: color_white
+                        id: id_lv_lab_${f_id}_status_next_feed_time
+                        text: "${i18n_next_feed_placeholder}"
+              - button:
+                  x: 0
+                  y: 0
+                  width: 80
+                  height: 50
+                  bg_opa: TRANSP
+                  shadow_opa: TRANSP
+                  radius: 0
+                  align: BOTTOM_LEFT
+                  widgets:
+                    - label:
+                        x: 5
+                        y: -5
+                        pad_all: 0
+                        text_font: montserrat_22
+                        text_color: color_gray
+                        text: "\uF015"
+                  on_press:
+                    then:
+                      - lvgl.page.show: 
+                          id: page_home
+                          animation: FADE_OUT
+                          time: 300ms
+                      - delay: 300ms

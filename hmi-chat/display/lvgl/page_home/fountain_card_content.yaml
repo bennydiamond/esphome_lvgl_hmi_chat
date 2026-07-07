@@ -170,6 +170,8 @@ widgets:
             clickable: false
             bg_color: color_bulb_blue
             press_lock: true
+            adv_hittest: True
+            ext_click_area: 6
             on_press:
               then:
                 - script.execute: id_script_popup_show_fountain_filter
@@ -195,6 +197,8 @@ widgets:
             clickable: false
             bg_color: color_bulb_blue
             press_lock: true
+            adv_hittest: True
+            ext_click_area: 6
             on_press:
               then:
                 - script.execute: id_script_popup_show_fountain_clean

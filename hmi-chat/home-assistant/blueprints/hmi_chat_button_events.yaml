@@ -1,8 +1,8 @@
 blueprint:
   name: HMI Chat - Button Events (Blueprint)
   description: |-
-    Handle ESPHome HMI events and map them to Petlibro actions.
-    Version: 1.0.2 (2026-01-01)
+    Handle ESPHome HMI events and map them to Petlibro actions (Dual Feeder Support).
+    Version: 1.1.0
   domain: automation
   source_url: https://raw.githubusercontent.com/bennydiamond/esphome_lvgl_hmi_chat/main/hmi-chat/home-assistant/blueprints/automation/hmi_chat_button_events.yaml
   homeassistant:
@@ -13,26 +13,60 @@ blueprint:
       description: Select the HMI Chat ESPHome device emitting events.
       selector:
         device: {}
-    feeder_open_lid_button:
-      name: Feeder open lid button
+        
+    # --- FEEDER 1 (La P'tite Crisse) ---
+    feeder1_open_lid_button:
+      name: Feeder 1 - Open lid button
       selector:
         entity:
           domain: button
-    feeder_manual_feed_button:
-      name: Feeder manual feed button
+    feeder1_manual_feed_button:
+      name: Feeder 1 - Manual feed button
       selector:
         entity:
           domain: button
-    feeder_manual_feed_quantity_select:
-      name: Feeder manual feed quantity select
+    feeder1_manual_feed_quantity_select:
+      name: Feeder 1 - Manual feed quantity select
       selector:
         entity:
           domain: select
-    feeder_dessiccant_replaced_button:
-      name: Feeder dessiccant replaced button
+    feeder1_dessiccant_replaced_button:
+      name: Feeder 1 - Dessiccant replaced button
       selector:
         entity:
           domain: button
+
+    # --- FEEDER 2 (Miss Puke) ---
+    feeder2_open_lid_button:
+      name: Feeder 2 - Open lid button
+      selector:
+        entity:
+          domain: button
+          multiple: false
+      default: {}
+    feeder2_manual_feed_button:
+      name: Feeder 2 - Manual feed button
+      selector:
+        entity:
+          domain: button
+          multiple: false
+      default: {}
+    feeder2_manual_feed_quantity_select:
+      name: Feeder 2 - Manual feed quantity select
+      selector:
+        entity:
+          domain: select
+          multiple: false
+      default: {}
+    feeder2_dessiccant_replaced_button:
+      name: Feeder 2 - Dessiccant replaced button
+      selector:
+        entity:
+          domain: button
+          multiple: false
+      default: {}
+
+    # --- FOUNTAIN ---
     fountain_filter_reset_button:
       name: Fountain filter reset button
       selector:
@@ -68,7 +102,8 @@ trigger:
 variables:
   device_id: !input hmi_device
   esphome_node_service_prefix: "{{ 'esphome.' ~ device_attr(device_id, 'name') | lower | replace(' ', '_') | replace('-', '_') }}"
-  ack_dessiccant_service: "{{ esphome_node_service_prefix ~ '_confirm_dessiccant_reset_req_received' }}"
+  ack_feeder1_dessiccant_service: "{{ esphome_node_service_prefix ~ '_confirm_feeder1_dessiccant_reset_req_received' }}"
+  ack_feeder2_dessiccant_service: "{{ esphome_node_service_prefix ~ '_confirm_feeder2_dessiccant_reset_req_received' }}"
   ack_filter_service: "{{ esphome_node_service_prefix ~ '_confirm_fountain_filter_reset_req_received' }}"
   ack_clean_service: "{{ esphome_node_service_prefix ~ '_confirm_fountain_clean_reset_req_received' }}"
   fountain_dispensing_mode_select_entity: !input fountain_dispensing_mode_select
@@ -77,67 +112,161 @@ condition: []
 
 action:
   - choose:
+      # ==========================================
+      # FEEDER 1 ACTIONS
+      # ==========================================
       - conditions:
-          - alias: Si le bouton ouvrir la mangeoire
+          - alias: Si le bouton ouvrir la mangeoire 1
             condition: template
             value_template: >-
-              {{ trigger.event.data.message == 'button_feeder_open_door' and
+              {{ trigger.event.data.message == 'button_feeder1_open_door' and
                  ((now() - trigger.event.time_fired).total_seconds() < 3) }}
         sequence:
           - service: button.press
             target:
-              entity_id: !input feeder_open_lid_button
+              entity_id: !input feeder1_open_lid_button
 
       - conditions:
-          - alias: Si le bouton nourrir a été appuyé
+          - alias: Si le bouton nourrir 1 a été appuyé
             condition: template
             value_template: >-
-              {{ trigger.event.data.message == 'button_feeder_manual_dispense' and
+              {{ trigger.event.data.message == 'button_feeder1_manual_dispense' and
                  ((now() - trigger.event.time_fired).total_seconds() < 3) }}
         sequence:
           - service: button.press
             target:
-              entity_id: !input feeder_manual_feed_button
+              entity_id: !input feeder1_manual_feed_button
 
       - conditions:
-          - alias: Si réduire quantité nourriture
+          - alias: Si réduire quantité nourriture 1
             condition: template
             value_template: >-
-              {{ trigger.event.data.message == 'button_feeder_reduce_manual_feed' and
+              {{ trigger.event.data.message == 'button_feeder1_reduce_manual_feed' and
                  ((now() - trigger.event.time_fired).total_seconds() < 3) }}
         sequence:
           - service: select.select_previous
             data:
               cycle: true
             target:
-              entity_id: !input feeder_manual_feed_quantity_select
+              entity_id: !input feeder1_manual_feed_quantity_select
 
       - conditions:
-          - alias: Si augmenter quantité nourriture
+          - alias: Si augmenter quantité nourriture 1
             condition: template
             value_template: >-
-              {{ trigger.event.data.message == 'button_feeder_increase_manual_feed' and
+              {{ trigger.event.data.message == 'button_feeder1_increase_manual_feed' and
                  ((now() - trigger.event.time_fired).total_seconds() < 3) }}
         sequence:
           - service: select.select_next
             data:
               cycle: true
             target:
-              entity_id: !input feeder_manual_feed_quantity_select
+              entity_id: !input feeder1_manual_feed_quantity_select
 
       - conditions:
-          - alias: Si définir la quantité
+          - alias: Si définir la quantité 1
             condition: template
             value_template: >-
-              {{ trigger.event.data.message == 'feeder_set_manual_feed' and
+              {{ trigger.event.data.message == 'feeder1_set_manual_feed' and
                  ((now() - trigger.event.time_fired).total_seconds() < 3) }}
         sequence:
           - service: select.select_option
             data:
               option: "{{ trigger.event.data.value }}"
             target:
-              entity_id: !input feeder_manual_feed_quantity_select
+              entity_id: !input feeder1_manual_feed_quantity_select
 
+      - conditions:
+          - alias: Si reset dessiccant 1 confirmé
+            condition: template
+            value_template: >-
+              {{ trigger.event.data.message == 'button_feeder1_reset_dessiccant' and
+                 ((now() - trigger.event.time_fired).total_seconds() < 3) }}
+        sequence:
+          - service: button.press
+            target:
+              entity_id: !input feeder1_dessiccant_replaced_button
+          - service: "{{ ack_feeder1_dessiccant_service }}"
+
+      # ==========================================
+      # FEEDER 2 ACTIONS
+      # ==========================================
+      - conditions:
+          - alias: Si le bouton ouvrir la mangeoire 2
+            condition: template
+            value_template: >-
+              {{ trigger.event.data.message == 'button_feeder2_open_door' and
+                 ((now() - trigger.event.time_fired).total_seconds() < 3) }}
+        sequence:
+          - service: button.press
+            target:
+              entity_id: !input feeder2_open_lid_button
+
+      - conditions:
+          - alias: Si le bouton nourrir 2 a été appuyé
+            condition: template
+            value_template: >-
+              {{ trigger.event.data.message == 'button_feeder2_manual_dispense' and
+                 ((now() - trigger.event.time_fired).total_seconds() < 3) }}
+        sequence:
+          - service: button.press
+            target:
+              entity_id: !input feeder2_manual_feed_button
+
+      - conditions:
+          - alias: Si réduire quantité nourriture 2
+            condition: template
+            value_template: >-
+              {{ trigger.event.data.message == 'button_feeder2_reduce_manual_feed' and
+                 ((now() - trigger.event.time_fired).total_seconds() < 3) }}
+        sequence:
+          - service: select.select_previous
+            data:
+              cycle: true
+            target:
+              entity_id: !input feeder2_manual_feed_quantity_select
+
+      - conditions:
+          - alias: Si augmenter quantité nourriture 2
+            condition: template
+            value_template: >-
+              {{ trigger.event.data.message == 'button_feeder2_increase_manual_feed' and
+                 ((now() - trigger.event.time_fired).total_seconds() < 3) }}
+        sequence:
+          - service: select.select_next
+            data:
+              cycle: true
+            target:
+              entity_id: !input feeder2_manual_feed_quantity_select
+
+      - conditions:
+          - alias: Si définir la quantité 2
+            condition: template
+            value_template: >-
+              {{ trigger.event.data.message == 'feeder2_set_manual_feed' and
+                 ((now() - trigger.event.time_fired).total_seconds() < 3) }}
+        sequence:
+          - service: select.select_option
+            data:
+              option: "{{ trigger.event.data.value }}"
+            target:
+              entity_id: !input feeder2_manual_feed_quantity_select
+
+      - conditions:
+          - alias: Si reset dessiccant 2 confirmé
+            condition: template
+            value_template: >-
+              {{ trigger.event.data.message == 'button_feeder2_reset_dessiccant' and
+                 ((now() - trigger.event.time_fired).total_seconds() < 3) }}
+        sequence:
+          - service: button.press
+            target:
+              entity_id: !input feeder2_dessiccant_replaced_button
+          - service: "{{ ack_feeder2_dessiccant_service }}"
+
+      # ==========================================
+      # FOUNTAIN ACTIONS
+      # ==========================================
       - conditions:
           - alias: Si le mode de distribution changé
             condition: template
@@ -151,18 +280,6 @@ action:
               entity_id: !input fountain_dispensing_mode_select
             data:
               option: "{{ state_attr(fountain_dispensing_mode_select_entity, 'options')[ (trigger.event.data.selected_option | int) ] }}"
-
-      - conditions:
-          - alias: Si reset dessiccant confirmé
-            condition: template
-            value_template: >-
-              {{ trigger.event.data.message == 'button_feeder_reset_dessiccant' and
-                 ((now() - trigger.event.time_fired).total_seconds() < 3) }}
-        sequence:
-          - service: button.press
-            target:
-              entity_id: !input feeder_dessiccant_replaced_button
-          - service: "{{ ack_dessiccant_service }}"
 
       - conditions:
           - alias: Si reset filtre fontaine confirmé

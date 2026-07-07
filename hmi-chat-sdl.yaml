@@ -14,5 +14,4 @@ packages:
   number: !include hmi-chat/components/number.yaml
   script: !include hmi-chat/components/script.yaml
   lvgl: !include hmi-chat/display/lvgl.yaml
-  feeder_sensors: !include hmi-chat/components/feeder_sensors.yaml
   fountain_sensors: !include hmi-chat/components/fountain_sensors.yaml

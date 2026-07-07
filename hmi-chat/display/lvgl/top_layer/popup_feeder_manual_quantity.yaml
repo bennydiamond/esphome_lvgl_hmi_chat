@@ -1,6 +1,6 @@
-# Feeder manual quantity popup overlay with roller and close button
+# ${f_id} manual quantity popup overlay with roller and close button
 obj:
-  id: id_lv_popup_feeder_quantity_overlay
+  id: id_lv_popup_${f_id}_quantity_overlay
   align: CENTER
   width: 320
   height: 480
@@ -26,7 +26,7 @@ obj:
         widgets:
           # Close button (top-right, red, with "X")
           - button:
-              id: id_lv_popup_feeder_quantity_close
+              id: id_lv_popup_${f_id}_quantity_close
               align: TOP_RIGHT
               width: 50
               height: 50
@@ -40,7 +40,7 @@ obj:
               shadow_spread: 1
               on_press:
                 then:
-                  - lvgl.widget.hide: id_lv_popup_feeder_quantity_overlay
+                  - lvgl.widget.hide: id_lv_popup_${f_id}_quantity_overlay
               widgets:
                 - label:
                     align: CENTER
@@ -48,7 +48,7 @@ obj:
                     text_color: color_white
                     text_font: lato_18
           - roller:
-              id: id_lv_roller_feeder_manual_quantity
+              id: id_lv_roller_${f_id}_manual_quantity
               align: CENTER
               x: -20
               visible_row_count: 5
@@ -59,7 +59,7 @@ obj:
                   - homeassistant.event:
                       event: esphome.set_entity_value
                       data:
-                        message: feeder_set_manual_feed
+                        message: ${f_id}_set_manual_feed
                         value: !lambda return text.c_str();
               options:
                 - "¹/₁₂"

@@ -38,20 +38,6 @@ script:
           text: !lambda 'return id(id_global_cleaning_string_store).c_str();'
           text_font: lato_18
 
-  - id: id_script_reset_dialog_confirm_execute_feeder_dessiccant
-    mode: single
-    then:
-      - homeassistant.event:
-          event: esphome.button_pressed
-          data:
-            message: button_feeder_reset_dessiccant
-      - delay: 75s
-      - script.execute: id_script_dessicant_reset_button_behavior
-      - lvgl.label.update:
-          id: id_lv_lab_feeder_dessiccant_days_left
-          text: !lambda 'return id(id_global_dessicant_string_store).c_str();'
-          text_font: lato_18
-
   # Generic popup routing script (action button)
   - id: id_script_popup_action_execute
     mode: single
@@ -60,7 +46,7 @@ script:
           condition:
             lambda: 'return id(popup_action) == 1;'
           then:
-            - script.execute: id_script_reset_dialog_confirm_execute_feeder_dessiccant
+            - script.execute: id_script_reset_dialog_confirm_execute_feeder1_dessiccant
       - if:
           condition:
             lambda: 'return id(popup_action) == 2;'
@@ -71,6 +57,11 @@ script:
             lambda: 'return id(popup_action) == 3;'
           then:
             - script.execute: id_script_reset_dialog_confirm_execute_fountain_clean
+      - if:
+          condition:
+            lambda: 'return id(popup_action) == 4;'
+          then:
+            - script.execute: id_script_reset_dialog_confirm_execute_feeder2_dessiccant
       - lvgl.widget.hide: id_lv_popup_generic_overlay
 
   # Toggle Settings page from top-right button
@@ -96,22 +87,6 @@ script:
                 id(is_on_settings_page) = true;
 
   # Show helpers: set labels + action and show the popup
-  - id: id_script_popup_show_feeder_dessiccant
-    mode: single
-    then:
-      - lvgl.label.update:
-          id: id_lv_popup_generic_title
-          text: "${i18n_reset_dessiccant_button}"
-      - lvgl.label.update:
-          id: id_lv_popup_generic_message
-          text: "${i18n_confirm_reset_dessiccant}"
-      - lvgl.label.update:
-          id: id_lv_popup_generic_action_label
-          text: "${i18n_confirm}"
-      - lambda: |-
-          id(popup_action) = 1;
-      - lvgl.widget.show: id_lv_popup_generic_overlay
-
   - id: id_script_popup_show_fountain_filter
     mode: single
     then:

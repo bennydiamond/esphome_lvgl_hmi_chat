@@ -1,5 +1,4 @@
-
-
+# main_tileview.yaml
 lvgl:
   pages:
     - id: !extend page_home
@@ -18,23 +17,88 @@ lvgl:
               grid_rows: [FR(1), FR(1)]
               pad_row: 10
             widgets:
-              - button:
-                  id: id_lv_but_feeder_card
-                  on_press:
-                    then:
-                      - lvgl.page.show:
-                          id: page_feeder
-                          animation: FADE_IN
-                          time: 300ms
-                  <<: !include { file: feeder_card_content.yaml }
+              
+              # ROW 0: SWIPEABLE FEEDERS
+              - tileview:
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  width: 100%
+                  height: 100%
+                  bg_opa: TRANSP
+                  border_opa: TRANSP
+                  pad_all: 0
+                  scrollbar:
+                    bg_opa: TRANSP
+                  tiles:
+                    
+                    # Tile 0: Feeder 1
+                    - row: 0
+                      column: 0
+                      dir: HOR
+                      width: 100%
+                      height: 100%
+                      bg_opa: TRANSP
+                      border_opa: TRANSP
+                      pad_all: 0
+                      widgets:
+                        - button:
+                            id: id_lv_but_feeder1_card
+                            width: 100%
+                            height: 100%
+                            adv_hittest: True
+                            on_long_press:
+                              then:
+                                - lvgl.page.show:
+                                    id: page_feeder1
+                                    animation: FADE_IN
+                                    time: 300ms
+                            <<: !include 
+                              file: feeder_card_template.yaml
+                              vars:
+                                f_id: feeder1
+                                f_img_id: id_img_feeder1
+
+                    # Tile 1: Feeder 2
+                    - row: 0
+                      column: 1
+                      dir: HOR
+                      width: 100%
+                      height: 100%
+                      bg_opa: TRANSP
+                      border_opa: TRANSP
+                      pad_all: 0
+                      widgets:
+                        - button:
+                            id: id_lv_but_feeder2_card
+                            width: 100%
+                            height: 100%
+                            adv_hittest: True
+                            on_long_press:
+                              then:
+                                - lvgl.page.show:
+                                    id: page_feeder2
+                                    animation: FADE_IN
+                                    time: 300ms
+                            <<: !include 
+                              file: feeder_card_template.yaml
+                              vars:
+                                f_id: feeder2
+                                f_img_id: id_img_feeder2
+
+              # ROW 1: FOUNTAIN
               - button:
                   id: id_lv_but_fountain_card
-                  on_press:
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 1
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  adv_hittest: True
+                  on_long_press:
                     then:
                       - lvgl.page.show:
                           id: page_fountain
                           animation: FADE_IN
                           time: 300ms
                   <<: !include { file: fountain_card_content.yaml }
-
-              

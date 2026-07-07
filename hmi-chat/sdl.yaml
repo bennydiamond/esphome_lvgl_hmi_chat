@@ -12,12 +12,6 @@ logger:
 
 api:
   actions:
-    - action: confirm_dessiccant_reset_req_received
-      then:
-        - lvgl.label.update:
-            id: id_lv_lab_feeder_dessiccant_days_left
-            text: "Attente confirm. Cloud"
-        - lvgl.widget.hide: id_lv_but_feeder_reset_dessiccant
     - action: confirm_fountain_filter_reset_req_received
       then:
         - lvgl.label.update:
