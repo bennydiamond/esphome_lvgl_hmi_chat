@@ -21,4 +21,9 @@ binary_sensor:
             animation: FADE_OUT
             time: 300ms
         - delay: 100ms
+        - lvgl.tileview.select:
+            id: id_lv_tileview_feeders
+            row: 0
+            column: 0
+            animated: true
 #        - lvgl.pause:

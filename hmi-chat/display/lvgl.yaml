@@ -6,46 +6,46 @@ packages:
   feeder_la_ptite_crisse: !include
     file: lvgl/feeder_package.yaml
     vars:
-      f_id: feeder1
-      f_img_id: id_img_feeder1
-      ha_ent_device_sn: sensor.mangeoire_de_la_p_tite_crisse_device_sn
-      ha_ent_mac_address: sensor.mangeoire_de_la_p_tite_crisse_mac_address
-      ha_ent_wifi_ssid: sensor.mangeoire_de_la_p_tite_crisse_wi_fi_ssid
-      ha_ent_wifi_signal: sensor.mangeoire_de_la_p_tite_crisse_wi_fi_signal_strength
-      ha_ent_dessi_remain_days: sensor.mangeoire_de_la_p_tite_crisse_desiccant_remaining_days
-      ha_ent_batt_status: binary_sensor.mangeoire_de_la_p_tite_crisse_battery_status
-      ha_ent_dispenser_status: binary_sensor.mangeoire_de_la_p_tite_crisse_food_dispenser
-      ha_ent_food_status: binary_sensor.mangeoire_de_la_p_tite_crisse_food_status
-      ha_ent_lid_status: binary_sensor.mangeoire_de_la_p_tite_crisse_lid_status
-      ha_ent_feeding_plan_active: binary_sensor.mangeoire_de_la_p_tite_crisse_feeding_schedule
-      ha_ent_wifi_connected: binary_sensor.mangeoire_de_la_p_tite_crisse_wi_fi
-      ha_ent_general_issue: binary_sensor.problemes_mangeoire_de_la_tite_crisse
-      ha_ent_manual_feed_qty: select.mangeoire_de_la_p_tite_crisse_manual_feed_quantity
-      ha_ent_issue_list: sensor.liste_problemes_mangeoire_de_la_tite_crisse
-      ha_ent_last_feed_time: sensor.mangeoire_de_la_petite_crisse_derniere_distribution
-      ha_ent_next_feed_time: sensor.mangeoire_de_la_petite_crisse_prochaine_distribution
+      f_id: ${feeder1_prefix}
+      f_img_id: ${feeder1_image_id}
+      ha_ent_device_sn: ${feeder1_device_sn_entity}
+      ha_ent_mac_address: ${feeder1_mac_address_entity}
+      ha_ent_wifi_ssid: ${feeder1_wifi_ssid_entity}
+      ha_ent_wifi_signal: ${feeder1_wifi_signal_entity}
+      ha_ent_dessi_remain_days: ${feeder1_dessi_remain_days_entity}
+      ha_ent_batt_status: ${feeder1_batt_status_entity}
+      ha_ent_dispenser_status: ${feeder1_dispenser_status_entity}
+      ha_ent_food_status: ${feeder1_food_status_entity}
+      ha_ent_lid_status: ${feeder1_lid_status_entity}
+      ha_ent_feeding_plan_active: ${feeder1_feeding_plan_active_entity}
+      ha_ent_wifi_connected: ${feeder1_wifi_connected_entity}
+      ha_ent_general_issue: ${feeder1_general_issue_entity}
+      ha_ent_manual_feed_qty: ${feeder1_manual_feed_quantity_entity}
+      ha_ent_issue_list: ${feeder1_issue_list_entity}
+      ha_ent_last_feed_time: ${feeder1_last_feed_time_entity}
+      ha_ent_next_feed_time: ${feeder1_next_feed_time_entity}
 
   feeder_miss_puke: !include
     file: lvgl/feeder_package.yaml
     vars:
-      f_id: feeder2
-      f_img_id: id_img_feeder2
-      ha_ent_device_sn: sensor.mangeoire_a_miss_puke_device_sn
-      ha_ent_mac_address: sensor.mangeoire_a_miss_puke_mac_address
-      ha_ent_wifi_ssid: sensor.mangeoire_a_miss_puke_wi_fi_ssid
-      ha_ent_wifi_signal: sensor.mangeoire_a_miss_puke_wi_fi_signal_strength
-      ha_ent_dessi_remain_days: sensor.mangeoire_a_miss_puke_desiccant_remaining_days
-      ha_ent_batt_status: binary_sensor.mangeoire_a_miss_puke_battery_status
-      ha_ent_dispenser_status: binary_sensor.mangeoire_a_miss_puke_food_dispenser
-      ha_ent_food_status: binary_sensor.mangeoire_a_miss_puke_food_status
-      ha_ent_lid_status: binary_sensor.mangeoire_a_miss_puke_lid_status
-      ha_ent_feeding_plan_active: binary_sensor.mangeoire_a_miss_puke_feeding_schedule
-      ha_ent_wifi_connected: binary_sensor.mangeoire_a_miss_puke_wi_fi
-      ha_ent_general_issue: binary_sensor.problemes_mangeoire_de_miss_puke
-      ha_ent_manual_feed_qty: select.mangeoire_a_miss_puke_manual_feed_quantity
-      ha_ent_issue_list: sensor.liste_problemes_mangeoire_de_miss_puke
-      ha_ent_last_feed_time: sensor.mangeoire_de_miss_puke_derniere_distribution
-      ha_ent_next_feed_time: sensor.mangeoire_de_miss_puke_prochaine_distribution
+      f_id: ${feeder2_prefix}
+      f_img_id: ${feeder2_image_id}
+      ha_ent_device_sn: ${feeder2_device_sn_entity}
+      ha_ent_mac_address: ${feeder2_mac_address_entity}
+      ha_ent_wifi_ssid: ${feeder2_wifi_ssid_entity}
+      ha_ent_wifi_signal: ${feeder2_wifi_signal_entity}
+      ha_ent_dessi_remain_days: ${feeder2_dessi_remain_days_entity}
+      ha_ent_batt_status: ${feeder2_batt_status_entity}
+      ha_ent_dispenser_status: ${feeder2_dispenser_status_entity}
+      ha_ent_food_status: ${feeder2_food_status_entity}
+      ha_ent_lid_status: ${feeder2_lid_status_entity}
+      ha_ent_feeding_plan_active: ${feeder2_feeding_plan_active_entity}
+      ha_ent_wifi_connected: ${feeder2_wifi_connected_entity}
+      ha_ent_general_issue: ${feeder2_general_issue_entity}
+      ha_ent_manual_feed_qty: ${feeder2_manual_feed_quantity_entity}
+      ha_ent_issue_list: ${feeder2_issue_list_entity}
+      ha_ent_last_feed_time: ${feeder2_last_feed_time_entity}
+      ha_ent_next_feed_time: ${feeder2_next_feed_time_entity}
 
 font: !include fonts.yaml
 image: !include images.yaml

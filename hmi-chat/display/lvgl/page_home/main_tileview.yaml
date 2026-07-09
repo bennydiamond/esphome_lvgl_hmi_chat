@@ -20,6 +20,7 @@ lvgl:
               
               # ROW 0: SWIPEABLE FEEDERS
               - tileview:
+                  id: id_lv_tileview_feeders
                   grid_cell_column_pos: 0
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
@@ -29,8 +30,15 @@ lvgl:
                   bg_opa: TRANSP
                   border_opa: TRANSP
                   pad_all: 0
+                  shadow_opa: COVER
+                  shadow_color: color_gray
+                  shadow_width: 9
+                  shadow_spread: 3
+                  clip_corner: True
+                  radius: 8
                   scrollbar:
-                    bg_opa: TRANSP
+                    opa: COVER
+                    bg_color: color_dark_blue
                   tiles:
                     
                     # Tile 0: Feeder 1
@@ -90,10 +98,7 @@ lvgl:
               # ROW 1: FOUNTAIN
               - button:
                   id: id_lv_but_fountain_card
-                  grid_cell_column_pos: 0
-                  grid_cell_row_pos: 1
-                  grid_cell_x_align: STRETCH
-                  grid_cell_y_align: STRETCH
+                  <<: !include { file: fountain_card_content.yaml }
                   adv_hittest: True
                   on_long_press:
                     then:
@@ -101,4 +106,3 @@ lvgl:
                           id: page_fountain
                           animation: FADE_IN
                           time: 300ms
-                  <<: !include { file: fountain_card_content.yaml }

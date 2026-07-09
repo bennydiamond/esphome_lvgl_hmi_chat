@@ -215,6 +215,28 @@ text_sensor:
             } else {
               return std::string("");
             }
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: id_lv_lab_${f_id}_problem_list
+            text: !lambda return x.c_str();
+        # Trigger tile switch if issue string is populated
+        - if:
+            condition:
+              lambda: return x.length() > 0;
+            then:
+              - lvgl.widget.show: id_lv_tile_${f_id}_problem
+              - lambda: |-
+                  if (id(id_lv_tileview_${f_id}_info_problem) != nullptr && id(id_lv_tile_${f_id}_problem) != nullptr) {
+                    lv_obj_set_tile(id(id_lv_tileview_${f_id}_info_problem), id(id_lv_tile_${f_id}_problem), LV_ANIM_ON);
+                  }
+            else:
+              - lambda: |-
+                  if (id(id_lv_tileview_${f_id}_info_problem) != nullptr && id(id_lv_tile_${f_id}_info) != nullptr) {
+                    lv_obj_set_tile(id(id_lv_tileview_${f_id}_info_problem), id(id_lv_tile_${f_id}_info), LV_ANIM_ON);
+                  }
+              - delay: 300ms # Wait for slide animation to finish before hiding
+              - lvgl.widget.hide: id_lv_tile_${f_id}_problem
   - platform: homeassistant
     id: id_text_sensor_${f_id}_last_feed_time
     entity_id: ${ha_ent_last_feed_time}
@@ -320,11 +342,24 @@ binary_sensor:
   - platform: homeassistant
     id: id_binary_sensor_${f_id}_general_issue
     entity_id: ${ha_ent_general_issue}
+    on_press:
+      then:
+        - lvgl.widget.show: id_lv_tile_${f_id}_problem
+        - lambda: |-
+            if (id(id_lv_tileview_${f_id}_info_problem) != nullptr && id(id_lv_tile_${f_id}_problem) != nullptr) {
+              lv_obj_set_tile(id(id_lv_tileview_${f_id}_info_problem), id(id_lv_tile_${f_id}_problem), LV_ANIM_ON);
+            }
     on_release:
       then:
         - lvgl.button.update:
             id: id_lv_but_${f_id}_card
             shadow_color: color_gray
+        - lambda: |-
+            if (id(id_lv_tileview_${f_id}_info_problem) != nullptr && id(id_lv_tile_${f_id}_info) != nullptr) {
+              lv_obj_set_tile(id(id_lv_tileview_${f_id}_info_problem), id(id_lv_tile_${f_id}_info), LV_ANIM_ON);
+            }
+        - delay: 300ms
+        - lvgl.widget.hide: id_lv_tile_${f_id}_problem
   - platform: homeassistant
     id: id_binary_sensor_${f_id}_wifi_connected
     entity_id: ${ha_ent_wifi_connected}
@@ -415,7 +450,10 @@ lvgl:
                     text_align: RIGHT
                     id: id_lv_lab_${f_id}_mac_address
                     text: "${i18n_mac_placeholder}"
-              - obj:
+              
+              # Replaced standard object with the info/problem Tileview
+              - tileview:
+                  id: id_lv_tileview_${f_id}_info_problem
                   align: TOP_LEFT
                   x: 10
                   y: 80
@@ -424,55 +462,83 @@ lvgl:
                   bg_opa: TRANSP
                   border_opa: TRANSP
                   pad_all: 0
-                  scrollable: False
-                  layout:
-                    type: GRID
-                    grid_columns: [100%]
-                    grid_rows: [FR(1), FR(1), FR(1), FR(1), FR(1), FR(1), FR(1)]
-                    pad_row: 4
-                  widgets:
-                    - label:
-                        align: LEFT_MID
-                        text_font: lato_18
-                        text_color: color_white
-                        id: id_lv_lab_${f_id}_status_battery
-                        text: "${i18n_battery_status_placeholder}"
-                    - label:
-                        align: LEFT_MID
-                        text_font: lato_18
-                        text_color: color_white
-                        id: id_lv_lab_${f_id}_status_dispenser
-                        text: "${i18n_dispenser_status_placeholder}"
-                    - label:
-                        align: LEFT_MID
-                        text_font: lato_18
-                        text_color: color_white
-                        id: id_lv_lab_${f_id}_status_food
-                        text: "${i18n_food_status_placeholder}"
-                    - label:
-                        align: LEFT_MID
-                        text_font: lato_18
-                        text_color: color_white
-                        id: id_lv_lab_${f_id}_status_lid
-                        text: "${i18n_lid_status_placeholder}"
-                    - label:
-                        align: LEFT_MID
-                        text_font: lato_18
-                        text_color: color_white
-                        id: id_lv_lab_${f_id}_feeding_plan_status
-                        text: "${i18n_feeding_plan_placeholder}"
-                    - label:
-                        align: LEFT_MID
-                        text_font: lato_18
-                        text_color: color_white
-                        id: id_lv_lab_${f_id}_status_last_feed_time
-                        text: "${i18n_last_feed_placeholder}"
-                    - label:
-                        align: LEFT_MID
-                        text_font: lato_18
-                        text_color: color_white
-                        id: id_lv_lab_${f_id}_status_next_feed_time
-                        text: "${i18n_next_feed_placeholder}"
+                  scrollbar:
+                    bg_opa: TRANSP
+                  tiles:
+                    # Tile 0: Problem List (Hidden by default so Info loads first)
+                    - id: id_lv_tile_${f_id}_problem
+                      column: 0
+                      row: 0
+                      hidden: true
+                      bg_opa: TRANSP
+                      border_opa: TRANSP
+                      pad_all: 0
+                      widgets:
+                        - label:
+                            id: id_lv_lab_${f_id}_problem_list
+                            align: TOP_LEFT
+                            width: 100%
+                            text_font: lato_18
+                            text_color: color_red
+                            long_mode: WRAP
+                            text: ""
+
+                    # Tile 1: Normal Info Overview
+                    - id: id_lv_tile_${f_id}_info
+                      column: 1
+                      row: 0
+                      bg_opa: TRANSP
+                      border_opa: TRANSP
+                      pad_all: 0
+                      layout:
+                        type: GRID
+                        grid_columns: [100%]
+                        grid_rows: [FR(1), FR(1), FR(1), FR(1), FR(1), FR(1), FR(1)]
+                        pad_row: 4
+                      widgets:
+                        - label:
+                            align: LEFT_MID
+                            text_font: lato_18
+                            text_color: color_white
+                            id: id_lv_lab_${f_id}_status_battery
+                            text: "${i18n_battery_status_placeholder}"
+                        - label:
+                            align: LEFT_MID
+                            text_font: lato_18
+                            text_color: color_white
+                            id: id_lv_lab_${f_id}_status_dispenser
+                            text: "${i18n_dispenser_status_placeholder}"
+                        - label:
+                            align: LEFT_MID
+                            text_font: lato_18
+                            text_color: color_white
+                            id: id_lv_lab_${f_id}_status_food
+                            text: "${i18n_food_status_placeholder}"
+                        - label:
+                            align: LEFT_MID
+                            text_font: lato_18
+                            text_color: color_white
+                            id: id_lv_lab_${f_id}_status_lid
+                            text: "${i18n_lid_status_placeholder}"
+                        - label:
+                            align: LEFT_MID
+                            text_font: lato_18
+                            text_color: color_white
+                            id: id_lv_lab_${f_id}_feeding_plan_status
+                            text: "${i18n_feeding_plan_placeholder}"
+                        - label:
+                            align: LEFT_MID
+                            text_font: lato_18
+                            text_color: color_white
+                            id: id_lv_lab_${f_id}_status_last_feed_time
+                            text: "${i18n_last_feed_placeholder}"
+                        - label:
+                            align: LEFT_MID
+                            text_font: lato_18
+                            text_color: color_white
+                            id: id_lv_lab_${f_id}_status_next_feed_time
+                            text: "${i18n_next_feed_placeholder}"
+
               - button:
                   x: 0
                   y: 0

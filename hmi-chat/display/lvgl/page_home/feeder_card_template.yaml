@@ -1,9 +1,9 @@
 # feeder_card_template.yaml
 bg_color: color_dark_gray
-shadow_opa: COVER
-shadow_color: color_gray
-shadow_width: 9
-shadow_spread: 3
+#shadow_opa: COVER
+#shadow_color: color_gray
+#shadow_width: 9
+#shadow_spread: 3
 pad_all: 0
 border_opa: COVER
 widgets:
