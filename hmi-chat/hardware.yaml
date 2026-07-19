@@ -18,20 +18,12 @@ esp32:
       CONFIG_SPIRAM_RODATA: y
       CONFIG_ESP32S3_DATA_CACHE_LINE_64B: y
       CONFIG_COMPILER_OPTIMIZATION_PERF: y
+    advanced:
+      loop_task_stack_size: 16384
 
 esphome:
   name: ${dname}
-  min_version: 2025.11.0
-  platformio_options:
-    build_unflags: -Werror=all
-    board_build.flash_mode: dio
-    board_build.f_flash: 80000000L
-    board_build.f_cpu: 240000000L
-    build_flags: 
-      - -DBOARD_HAS_PSRAM
-    board_build.esp-idf.memory_type: qio_opi
-    board_upload.maximum_ram_size: 524288
-    board_build.flash_size: 16MB
+  min_version: 2026.7.0
   on_boot:
     - priority: 500 # a bit after sensor init
       then:
@@ -46,47 +38,39 @@ esphome:
         - script.execute: id_script_backlight_timeout
 
 logger:
-  level: DEBUG
-  hardware_uart: UART0
-  #baud_rate: 0
-#  logs: 
-#    safe_mode: INFO
-#    debug: INFO
-#    main: WARN
-#    esp-idf: WARN
-#    esp32.preferences: WARN
-#    wifi: WARN
-#    api: WARN
-#    sntp: WARN
-#    i2c: WARN
-#    i2c.idf: WARN
-#    ch422g: WARN
-#    touchscreen: WARN
-#    gt911.touchscreen: WARN
-#    switch: WARN
-#    sensor: WARN
-#    binary_sensor: WARN
-#    text_sensor: WARN
-#    light: WARN
-#    select: WARN
-#    homeassistant.sensor: WARN
-#    homeassistant.binary_sensor: WARN
-#    homeassistant.text_sensor: WARN
-#    template.switch: WARN
-#    script: WARN
-#    http_request: WARN
-#    http_request.idf: WARN
-#    online_image: WARN
-#    number: WARN
+  - id: !extend id_logger
+  # logs: 
+  #    safe_mode: INFO
+  #    debug: INFO
+  #    main: WARN
+  #    esp-idf: WARN
+  #    esp32.preferences: WARN
+  #    wifi: WARN
+  #    api: WARN
+  #    sntp: WARN
+  #    i2c: WARN
+  #    i2c.idf: WARN
+  #    ch422g: WARN
+  #    touchscreen: WARN
+  #    gt911.touchscreen: WARN
+  #    switch: WARN
+  #    sensor: WARN
+  #    binary_sensor: WARN
+  #    text_sensor: WARN
+  #    light: WARN
+  #    select: WARN
+  #    homeassistant.sensor: WARN
+  #    homeassistant.binary_sensor: WARN
+  #    homeassistant.text_sensor: WARN
+  #    template.switch: WARN
+  #    script: WARN
+  #    http_request: WARN
+  #    http_request.idf: WARN
+  #    online_image: WARN
+  #    number: WARN
 
 api:
   actions:
-    - action: confirm_dessiccant_reset_req_received
-      then:
-        - lvgl.label.update:
-            id: id_lv_lab_feeder_dessiccant_days_left
-            text: "Attente confirm. Cloud"
-        - lvgl.widget.hide: id_lv_but_feeder_reset_dessiccant
     - action: confirm_fountain_filter_reset_req_received
       then:
         - lvgl.label.update:
@@ -261,20 +245,10 @@ light:
                 format: "%u%%"
                 args: [(uint8_t)(id(id_light_backlight_brightness).remote_values.get_brightness() * 100)]
 
-display:
-  - id: main_display
-    platform: qspi_dbi
-    dimensions:
-      height: 480
-      width: 320
-    model: CUSTOM
-    data_rate: 40MHz
-    cs_pin:
-      number: 45
-      ignore_strapping_warning: true
-    draw_from_origin: true
-    update_interval: never
-    auto_clear_enabled: false
+
+display: 
+  - platform: mipi_spi
+    model: jc3248w535
 
 touchscreen:
   - id: main_touchscreen

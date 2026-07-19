@@ -1,6 +1,12 @@
 dname: "hmi-chat"
 uname: "HMI Équipments Chats"
 
+
+# Logging from esp-idf.template.yaml
+uart_logger_baud_rate: 115200
+default_log_level: INFO
+max_log_level: DEBUG
+
 <<: !include i18n/fr.yaml
 
 settings:           "\U000F0493" # settings
@@ -31,25 +37,50 @@ threshold_water_warn_offset_percent: "15.0"
 
 # Home Assistant entity IDs
 
-## Feeder — Petlibro Integration
-feeder_device_sn_entity: sensor.mangeoire_de_la_p_tite_crisse_device_sn                         # Serial number → id_lv_lab_feeder_device_sn
-feeder_mac_address_entity: sensor.mangeoire_de_la_p_tite_crisse_mac_address                     # MAC address → id_lv_lab_feeder_mac_address
-feeder_wifi_ssid_entity: sensor.mangeoire_de_la_p_tite_crisse_wi_fi_ssid                        # SSID text → id_lv_lab_feeder_wifi_ssid (when connected)
-feeder_wifi_signal_entity: sensor.mangeoire_de_la_p_tite_crisse_wi_fi_signal_strength           # Wi‑Fi RSSI (dBm) → feeder Wi‑Fi icon bars/color
-feeder_dessi_remain_days_entity: sensor.mangeoire_de_la_p_tite_crisse_desiccant_remaining_days  # Dessiccant remaining days → button/label state & color
-feeder_batt_status_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_battery_status           # Battery low/ok → status label color/text
-feeder_dispenser_status_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_food_dispenser      # Dispenser issue → status label color/text
-feeder_food_status_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_food_status              # Food level problem → status label color/text
-feeder_lid_status_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_lid_status                # Lid open/issue → status label color/text
-feeder_feeding_plan_active_entity: sensor.mangeoire_de_la_p_tite_crisse_today_s_feeding_plan    # Auto plan active → status label text/color
-feeder_wifi_connected_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_wi_fi                 # Wi‑Fi connected → SSID gating/icon outline
-feeder_general_issue_entity: binary_sensor.problemes_mangeoire_de_la_tite_crisse                # Integration “problem” flag → card shadow/notification button
-feeder_manual_feed_quantity_entity: select.mangeoire_de_la_p_tite_crisse_manual_feed_quantity   # Manual feed portion select → roller/label sync
+#
+## Feeder1 — Petlibro Integration
+feeder1_prefix: "feeder1"
+feeder1_image_id: id_img_feeder1
+feeder1_device_sn_entity: sensor.mangeoire_de_la_p_tite_crisse_device_sn                         # Serial number → id_lv_lab_feeder_device_sn
+feeder1_mac_address_entity: sensor.mangeoire_de_la_p_tite_crisse_mac_address                     # MAC address → id_lv_lab_feeder_mac_address
+feeder1_wifi_ssid_entity: sensor.mangeoire_de_la_p_tite_crisse_wi_fi_ssid                        # SSID text → id_lv_lab_feeder_wifi_ssid (when connected)
+feeder1_wifi_signal_entity: sensor.mangeoire_de_la_p_tite_crisse_wi_fi_signal_strength           # Wi‑Fi RSSI (dBm) → feeder Wi‑Fi icon bars/color
+feeder1_dessi_remain_days_entity: sensor.mangeoire_de_la_p_tite_crisse_desiccant_remaining_days  # Dessiccant remaining days → button/label state & color
+feeder1_batt_status_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_battery_status           # Battery low/ok → status label color/text
+feeder1_dispenser_status_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_food_dispenser      # Dispenser issue → status label color/text
+feeder1_food_status_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_food_status              # Food level problem → status label color/text
+feeder1_lid_status_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_lid_status                # Lid open/issue → status label color/text
+feeder1_feeding_plan_active_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_feeding_schedule # Auto plan active → status label text/color
+feeder1_wifi_connected_entity: binary_sensor.mangeoire_de_la_p_tite_crisse_wi_fi                 # Wi‑Fi connected → SSID gating/icon outline
+feeder1_general_issue_entity: binary_sensor.problemes_mangeoire_de_la_tite_crisse                # Integration “problem” flag → card shadow/notification button
+feeder1_manual_feed_quantity_entity: select.mangeoire_de_la_p_tite_crisse_manual_feed_quantity   # Manual feed portion select → roller/label sync
 
-## Feeder — User Helpers
-feeder_issue_list_entity: sensor.liste_problemes_mangeoire_de_la_tite_crisse                    # Aggregated feeder issues list → popup/notification content
-feeder_last_feed_time_entity: sensor.mangeoire_de_la_petite_crisse_derniere_distribution        # Pretty last feed time → status label
-feeder_next_feed_time_entity: sensor.mangeoire_de_la_petite_crisse_prochaine_distribution       # Pretty next feed time → status label
+## Feeder1 — User Helpers
+feeder1_issue_list_entity: sensor.liste_problemes_mangeoire_de_la_tite_crisse                    # Aggregated feeder issues list → popup/notification content
+feeder1_last_feed_time_entity: sensor.mangeoire_de_la_petite_crisse_derniere_distribution        # Pretty last feed time → status label
+feeder1_next_feed_time_entity: sensor.mangeoire_de_la_petite_crisse_prochaine_distribution       # Pretty next feed time → status label
+
+## Feeder2 — Petlibro Integration
+feeder2_prefix: "feeder2"
+feeder2_image_id: id_img_feeder2
+feeder2_device_sn_entity: sensor.mangeoire_a_miss_puke_device_sn
+feeder2_mac_address_entity: sensor.mangeoire_a_miss_puke_mac_address
+feeder2_wifi_ssid_entity: sensor.mangeoire_a_miss_puke_wi_fi_ssid
+feeder2_wifi_signal_entity: sensor.mangeoire_a_miss_puke_wi_fi_signal_strength
+feeder2_dessi_remain_days_entity: sensor.mangeoire_a_miss_puke_desiccant_remaining_days
+feeder2_batt_status_entity: binary_sensor.mangeoire_a_miss_puke_battery_status
+feeder2_dispenser_status_entity: binary_sensor.mangeoire_a_miss_puke_food_dispenser
+feeder2_food_status_entity: binary_sensor.mangeoire_a_miss_puke_food_status
+feeder2_lid_status_entity: binary_sensor.mangeoire_a_miss_puke_lid_status
+feeder2_feeding_plan_active_entity: binary_sensor.mangeoire_a_miss_puke_feeding_schedule
+feeder2_wifi_connected_entity: binary_sensor.mangeoire_a_miss_puke_wi_fi
+feeder2_general_issue_entity: binary_sensor.problemes_mangeoire_de_miss_puke
+feeder2_manual_feed_quantity_entity: select.mangeoire_a_miss_puke_manual_feed_quantity
+
+# Feeder2 — User Helpers
+feeder2_issue_list_entity: sensor.liste_problemes_mangeoire_de_miss_puke
+feeder2_last_feed_time_entity: sensor.mangeoire_de_miss_puke_derniere_distribution
+feeder2_next_feed_time_entity: sensor.mangeoire_de_miss_puke_prochaine_distribution
 
 ## Fountain — Petlibro Integration
 fountain_device_sn_entity: sensor.fontaine_device_sn                                            # Serial number → id_lv_lab_fountain_device_sn

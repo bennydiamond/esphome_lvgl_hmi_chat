@@ -1,8 +1,15 @@
-- file: 'hmi-chat/feeder-small.png'
+- platform: file
+  file: hmi-chat/feeder-small.png
   type: RGB565
-  id: id_img_feeder
+  id: id_img_feeder1
   transparency: alpha_channel
-- file: 'hmi-chat/fountain-small.png'
+- platform: file
+  file: hmi-chat/feeder-small-black.png
+  type: RGB565
+  id: id_img_feeder2
+  transparency: alpha_channel
+- platform: file
+  file: hmi-chat/fountain-small.png
   type: RGB565
   id: id_img_fountain
   transparency: alpha_channel

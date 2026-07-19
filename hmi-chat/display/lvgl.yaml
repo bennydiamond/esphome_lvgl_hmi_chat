@@ -1,10 +1,51 @@
 packages:
   page_home: !include lvgl/page_home.yaml
-  page_feeder: !include lvgl/page_feeder.yaml
   page_fountain: !include lvgl/page_fountain.yaml
   page_settings: !include lvgl/page_settings.yaml
   notification_area_sensors: !include notification_area_sensors.yaml
+  feeder_la_ptite_crisse: !include
+    file: lvgl/feeder_package.yaml
+    vars:
+      f_id: ${feeder1_prefix}
+      f_img_id: ${feeder1_image_id}
+      ha_ent_device_sn: ${feeder1_device_sn_entity}
+      ha_ent_mac_address: ${feeder1_mac_address_entity}
+      ha_ent_wifi_ssid: ${feeder1_wifi_ssid_entity}
+      ha_ent_wifi_signal: ${feeder1_wifi_signal_entity}
+      ha_ent_dessi_remain_days: ${feeder1_dessi_remain_days_entity}
+      ha_ent_batt_status: ${feeder1_batt_status_entity}
+      ha_ent_dispenser_status: ${feeder1_dispenser_status_entity}
+      ha_ent_food_status: ${feeder1_food_status_entity}
+      ha_ent_lid_status: ${feeder1_lid_status_entity}
+      ha_ent_feeding_plan_active: ${feeder1_feeding_plan_active_entity}
+      ha_ent_wifi_connected: ${feeder1_wifi_connected_entity}
+      ha_ent_general_issue: ${feeder1_general_issue_entity}
+      ha_ent_manual_feed_qty: ${feeder1_manual_feed_quantity_entity}
+      ha_ent_issue_list: ${feeder1_issue_list_entity}
+      ha_ent_last_feed_time: ${feeder1_last_feed_time_entity}
+      ha_ent_next_feed_time: ${feeder1_next_feed_time_entity}
 
+  feeder_miss_puke: !include
+    file: lvgl/feeder_package.yaml
+    vars:
+      f_id: ${feeder2_prefix}
+      f_img_id: ${feeder2_image_id}
+      ha_ent_device_sn: ${feeder2_device_sn_entity}
+      ha_ent_mac_address: ${feeder2_mac_address_entity}
+      ha_ent_wifi_ssid: ${feeder2_wifi_ssid_entity}
+      ha_ent_wifi_signal: ${feeder2_wifi_signal_entity}
+      ha_ent_dessi_remain_days: ${feeder2_dessi_remain_days_entity}
+      ha_ent_batt_status: ${feeder2_batt_status_entity}
+      ha_ent_dispenser_status: ${feeder2_dispenser_status_entity}
+      ha_ent_food_status: ${feeder2_food_status_entity}
+      ha_ent_lid_status: ${feeder2_lid_status_entity}
+      ha_ent_feeding_plan_active: ${feeder2_feeding_plan_active_entity}
+      ha_ent_wifi_connected: ${feeder2_wifi_connected_entity}
+      ha_ent_general_issue: ${feeder2_general_issue_entity}
+      ha_ent_manual_feed_qty: ${feeder2_manual_feed_quantity_entity}
+      ha_ent_issue_list: ${feeder2_issue_list_entity}
+      ha_ent_last_feed_time: ${feeder2_last_feed_time_entity}
+      ha_ent_next_feed_time: ${feeder2_next_feed_time_entity}
 
 font: !include fonts.yaml
 image: !include images.yaml
@@ -46,9 +87,7 @@ interval:
             lv_label_set_text(id(id_lv_lab_wifi_info_text), combined.c_str());
           }
 
-lvgl:
-  disp_bg_image: none
-            
+lvgl:            
   top_layer: # Top Screen Status bar. Visible on all pages.
     widgets:
       # Top notification area delimiter line
@@ -57,5 +96,14 @@ lvgl:
       - <<: !include lvgl/top_layer/popup_generic.yaml
       # Catstuff problem popup (single close button)
       - <<: !include lvgl/top_layer/popup_catstuff.yaml
-      # Feeder manual quantity popup (roller + close)
-      - <<: !include lvgl/top_layer/popup_feeder_manual_quantity.yaml
+      # Feeder 1 manual quantity popup
+      - <<: !include 
+          file: lvgl/top_layer/popup_feeder_manual_quantity.yaml
+          vars:
+            f_id: feeder1
+
+      # Feeder 2 manual quantity popup
+      - <<: !include 
+          file: lvgl/top_layer/popup_feeder_manual_quantity.yaml
+          vars:
+            f_id: feeder2

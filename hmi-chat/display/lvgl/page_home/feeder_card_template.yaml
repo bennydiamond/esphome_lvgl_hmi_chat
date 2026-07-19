@@ -1,12 +1,9 @@
-grid_cell_column_pos: 0
-grid_cell_row_pos: 0
-grid_cell_x_align: STRETCH
-grid_cell_y_align: STRETCH
+# feeder_card_template.yaml
 bg_color: color_dark_gray
-shadow_opa: COVER
-shadow_color: color_gray
-shadow_width: 9
-shadow_spread: 3
+#shadow_opa: COVER
+#shadow_color: color_gray
+#shadow_width: 9
+#shadow_spread: 3
 pad_all: 0
 border_opa: COVER
 widgets:
@@ -14,7 +11,7 @@ widgets:
       align: TOP_LEFT
       x: 10
       y: 10
-      src: id_img_feeder
+      src: ${f_img_id}
   - obj:
       align: TOP_RIGHT
       width: 216
@@ -43,7 +40,7 @@ widgets:
             text_decor: UNDERLINE
             text: "${i18n_dessiccant_label}"
         - label:
-            id: id_lv_lab_feeder_dessiccant_days_left
+            id: id_lv_lab_${f_id}_dessiccant_days_left
             grid_cell_column_pos: 0
             grid_cell_row_pos: 1
             grid_cell_x_align: STRETCH
@@ -97,12 +94,14 @@ widgets:
                   radius: 0
                   clip_corner: true
                   press_lock: true
+                  adv_hittest: True
+                  ext_click_area: 6
                   on_press:
                     then:
                       - homeassistant.event:
                           event: esphome.button_pressed
                           data:
-                            message: button_feeder_reduce_manual_feed
+                            message: button_${f_id}_reduce_manual_feed
                   widgets:
                     - label:
                         align: CENTER
@@ -123,15 +122,17 @@ widgets:
                   radius: 0
                   clip_corner: true
                   scrollable: False
+                  adv_hittest: True
+                  ext_click_area: 6
                   on_press:
                     then:
-                      - lvgl.widget.show: id_lv_popup_feeder_quantity_overlay
+                      - lvgl.widget.show: id_lv_popup_${f_id}_quantity_overlay
                   widgets:
                     - label:
                         align: CENTER
                         pad_all: 0
                         bg_opa: TRANSP
-                        id: id_lv_lab_feeder_manual_feed_portion_display
+                        id: id_lv_lab_${f_id}_manual_feed_portion_display
                         text_align: CENTER
                         text_font: lato_18
                         text_color: color_black
@@ -145,12 +146,14 @@ widgets:
                   radius: 0
                   clip_corner: true
                   press_lock: true
+                  adv_hittest: True
+                  ext_click_area: 6
                   on_press:
                     then:
                       - homeassistant.event:
                           event: esphome.button_pressed
                           data:
-                            message: button_feeder_increase_manual_feed
+                            message: button_${f_id}_increase_manual_feed
                   widgets:
                     - label:
                         align: CENTER
@@ -163,12 +166,14 @@ widgets:
             grid_cell_x_align: STRETCH
             grid_cell_y_align: STRETCH
             press_lock: true
+            adv_hittest: True
+            ext_click_area: 6
             on_press:
               then:
                   - homeassistant.event:
                       event: esphome.button_pressed
                       data:
-                        message: button_feeder_manual_dispense
+                        message: button_${f_id}_manual_dispense
             widgets:
               - label:
                   align: CENTER
@@ -193,7 +198,7 @@ widgets:
         pad_column: 40
       widgets:
         - button:
-            id: id_lv_but_feeder_reset_dessiccant
+            id: id_lv_but_${f_id}_reset_dessiccant
             grid_cell_column_pos: 0
             grid_cell_row_pos: 0
             grid_cell_x_align: STRETCH
@@ -204,12 +209,14 @@ widgets:
             clickable: false
             bg_color: color_bulb_blue
             press_lock: true
+            adv_hittest: True
+            ext_click_area: 6
             on_press:
               then:
-                - script.execute: id_script_popup_show_feeder_dessiccant
+                - script.execute: id_script_popup_show_${f_id}_dessiccant
             widgets:
               - label:
-                  id: id_lv_lab_feeder_reset_dessiccant
+                  id: id_lv_lab_${f_id}_reset_dessiccant
                   align: CENTER
                   text_font: lato_18
                   text_color: color_white
@@ -225,12 +232,14 @@ widgets:
             pad_all: 0
             border_opa: TRANSP
             press_lock: true
+            adv_hittest: True
+            ext_click_area: 6
             on_press:
               then:
                 - homeassistant.event:
                     event: esphome.button_pressed
                     data:
-                      message: button_feeder_open_door
+                      message: button_${f_id}_open_door
             widgets:
               - label:
                   align: CENTER

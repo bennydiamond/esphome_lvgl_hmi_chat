@@ -15,10 +15,10 @@ binary_sensor:
             id: id_lv_lab_ha_status
             text_color: color_dark_gray
 
-  # Problem cat feeder from HA #
+  # Problem cat feeder1 from HA #
   - platform: homeassistant
-    id: id_ha_cat_feeder_problem
-    entity_id: ${feeder_general_issue_entity}
+    id: id_ha_cat_feeder1_problem
+    entity_id: ${feeder1_general_issue_entity}
     trigger_on_initial_state: True
     on_press:
       then:
@@ -31,7 +31,35 @@ binary_sensor:
       then:
         - if:
             condition:
+              and:
+              - binary_sensor.is_off: id_ha_cat_feeder2_problem
               - binary_sensor.is_off: id_ha_cat_fountain_problem
+            then:
+              - lvgl.widget.hide: id_lv_but_catstuff_problem
+            else:
+              - lvgl.label.update:
+                  id: id_lv_lab_catstuff_problem
+                  text_color: color_blue
+                  hidden: false
+
+  - platform: homeassistant
+    id: id_ha_cat_feeder2_problem
+    entity_id: ${feeder2_general_issue_entity}
+    trigger_on_initial_state: True
+    on_press:
+      then:
+        - lvgl.widget.show: id_lv_but_catstuff_problem
+        - lvgl.label.update:
+            id: id_lv_lab_catstuff_problem
+            text_color: color_red
+            hidden: false
+    on_release:
+      then:
+        - if:
+            condition:
+              and:
+              - binary_sensor.is_off: id_ha_cat_fountain_problem
+              - binary_sensor.is_off: id_ha_cat_feeder1_problem
             then:
               - lvgl.widget.hide: id_lv_but_catstuff_problem
             else:
@@ -57,7 +85,9 @@ binary_sensor:
       then:
         - if:
             condition:
-              - binary_sensor.is_off: id_ha_cat_feeder_problem
+              and:
+                - binary_sensor.is_off: id_ha_cat_feeder1_problem
+                - binary_sensor.is_off: id_ha_cat_feeder2_problem
             then:
               - lvgl.widget.hide: id_lv_but_catstuff_problem
             else:
@@ -92,7 +122,8 @@ interval:
       - if:
           condition:
             and: 
-              - binary_sensor.is_on: id_ha_cat_feeder_problem
+              - binary_sensor.is_on: id_ha_cat_feeder1_problem
+              - binary_sensor.is_on: id_ha_cat_feeder2_problem
               - binary_sensor.is_on: id_ha_cat_fountain_problem
           then:
             - if:

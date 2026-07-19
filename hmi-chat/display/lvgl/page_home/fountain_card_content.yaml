@@ -8,6 +8,7 @@ shadow_color: color_gray
 shadow_width: 9
 shadow_spread: 3
 pad_all: 0
+radius: 8
 widgets:
   - image:
       align: TOP_LEFT
@@ -170,6 +171,8 @@ widgets:
             clickable: false
             bg_color: color_bulb_blue
             press_lock: true
+            adv_hittest: True
+            ext_click_area: 6
             on_press:
               then:
                 - script.execute: id_script_popup_show_fountain_filter
@@ -195,6 +198,8 @@ widgets:
             clickable: false
             bg_color: color_bulb_blue
             press_lock: true
+            adv_hittest: True
+            ext_click_area: 6
             on_press:
               then:
                 - script.execute: id_script_popup_show_fountain_clean

@@ -3,6 +3,15 @@
     - lambda: |-
         char time_buf[6];
         auto now = id(id_sntp_time).now();
-        snprintf(time_buf, sizeof(time_buf), "%02d:%02d", now.hour, now.minute);
+
+        int hour = now.hour;
+        int minute = now.minute;
+
+        if (hour >= 0 && hour <= 23 &&
+            minute >= 0 && minute <= 59) {
+            snprintf(time_buf, sizeof(time_buf), "%02d:%02d", hour, minute);
+        } else {
+            strcpy(time_buf, "--:--");
+        }
 
         lv_label_set_text(id(id_lv_lab_time_notif_area), time_buf);
