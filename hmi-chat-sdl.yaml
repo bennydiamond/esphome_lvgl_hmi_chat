@@ -9,7 +9,6 @@ packages:
   sensor: !include hmi-chat/components/sensor.yaml
   binary_sensor: !include hmi-chat/components/binary_sensor.yaml
   switch: !include hmi-chat/components/switch.yaml
-  online_image: !include hmi-chat/components/online_image.yaml
   select: !include hmi-chat/components/select.yaml
   number: !include hmi-chat/components/number.yaml
   script: !include hmi-chat/components/script.yaml
