@@ -13,10 +13,14 @@ api:
   actions:
     - action: confirm_${f_id}_dessiccant_reset_req_received
       then:
-        - lvgl.label.update:
-            id: id_lv_lab_${f_id}_dessiccant_days_left
-            text: "Attente confirm. Cloud"
-        - lvgl.widget.hide: id_lv_but_${f_id}_reset_dessiccant
+        - if:
+            condition:
+              - script.is_running: id_script_reset_dialog_confirm_execute_${f_id}_dessiccant
+            then:
+              - lvgl.label.update:
+                  id: id_lv_lab_${f_id}_dessiccant_days_left
+                  text: "Attente confirm. Cloud"
+              - lvgl.widget.hide: id_lv_but_${f_id}_reset_dessiccant
         
 script:
   - id: id_script_dessicant_reset_button_behavior_${f_id}

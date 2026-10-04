@@ -14,17 +14,25 @@ api:
   actions:
     - action: confirm_fountain_filter_reset_req_received
       then:
-        - lvgl.label.update:
-            id: id_lab_fountain_filter_remaining_days
-            text: ${cloud_refresh}
-            text_font: mdi_icons_22
+        - if:
+            condition:
+              - lambda: return static_cast<int>(id(id_sensor_fountain_filter_cycle_days).state) > static_cast<int>(id(id_sensor_fountain_filter_remaining_days).state);
+            then:
+              - lvgl.label.update:
+                  id: id_lab_fountain_filter_remaining_days
+                  text: ${cloud_refresh}
+                  text_font: mdi_icons_22
         - lvgl.widget.hide: id_lv_but_fountain_reset_filter
     - action: confirm_fountain_clean_reset_req_received
       then:
-        - lvgl.label.update:
-            id: id_lab_fountain_clean_remaining_days
-            text: ${cloud_refresh}
-            text_font: mdi_icons_22
+        - if:
+            condition:
+              - lambda: return static_cast<int>(id(id_sensor_fountain_clean_cycle_days).state) > static_cast<int>(id(id_sensor_fountain_cleaning_remaining_days).state);
+            then:
+              - lvgl.label.update:
+                  id: id_lab_fountain_clean_remaining_days
+                  text: ${cloud_refresh}
+                  text_font: mdi_icons_22
         - lvgl.widget.hide: id_lv_but_fountain_reset_clean
 
 http_request:

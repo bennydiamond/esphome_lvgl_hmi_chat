@@ -73,18 +73,26 @@ api:
   actions:
     - action: confirm_fountain_filter_reset_req_received
       then:
-        - lvgl.label.update:
-            id: id_lab_fountain_filter_remaining_days
-            text: ${cloud_refresh}
-            text_font: mdi_icons_22
-        - lvgl.widget.hide: id_lv_but_fountain_reset_filter
+        - if:
+            condition:
+              - script.is_running: id_script_reset_dialog_confirm_execute_fountain_filter
+            then:
+              - lvgl.label.update:
+                  id: id_lab_fountain_filter_remaining_days
+                  text: ${cloud_refresh}
+                  text_font: mdi_icons_22
+              - lvgl.widget.hide: id_lv_but_fountain_reset_filter
     - action: confirm_fountain_clean_reset_req_received
       then:
-        - lvgl.label.update:
-            id: id_lab_fountain_clean_remaining_days
-            text: ${cloud_refresh}
-            text_font: mdi_icons_22
-        - lvgl.widget.hide: id_lv_but_fountain_reset_clean
+        - if:
+            condition:
+              - script.is_running: id_script_reset_dialog_confirm_execute_fountain_clean
+            then:
+              - lvgl.label.update:
+                  id: id_lab_fountain_clean_remaining_days
+                  text: ${cloud_refresh}
+                  text_font: mdi_icons_22
+              - lvgl.widget.hide: id_lv_but_fountain_reset_clean
 
 http_request:
   verify_ssl: false
