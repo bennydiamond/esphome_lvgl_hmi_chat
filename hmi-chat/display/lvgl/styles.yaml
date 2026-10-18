@@ -1,0 +1,46 @@
+# Centralized LVGL Style Definitions for HMI Chat
+# Deduplicates styles to reduce generated C++ binary size and RAM usage
+
+# --- Sub-page Back / Home Navigation Button Styles ---
+- id: style_subpage_back_button
+  x: 0
+  y: 0
+  width: 80
+  height: 50
+  bg_opa: TRANSP
+  shadow_opa: TRANSP
+  radius: 0
+  align: BOTTOM_LEFT
+
+- id: style_subpage_back_icon
+  x: 5
+  y: -5
+  pad_all: 0
+  text_font: montserrat_22
+  text_color: color_gray
+
+# --- Top Layer Notification Area Styles ---
+- id: style_notif_button
+  pad_all: 0
+  height: 35
+  width: 33
+  border_side: NONE
+  bg_opa: TRANSP
+  shadow_width: 0
+
+- id: style_notif_icon
+  align: CENTER
+  text_font: mdi_icons_32
+
+# --- Pop-up Dialog Button Styles ---
+- id: style_popup_btn
+  shadow_opa: COVER
+  shadow_color: color_gray
+  shadow_width: 6
+  shadow_spread: 1
+
+# --- General Utility Styles ---
+- id: style_transparent_container
+  bg_opa: TRANSP
+  border_opa: TRANSP
+  pad_all: 0

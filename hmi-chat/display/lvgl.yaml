@@ -88,6 +88,7 @@ interval:
           }
 
 lvgl:            
+  style_definitions: !include lvgl/styles.yaml
   top_layer: # Top Screen Status bar. Visible on all pages.
     widgets:
       # Top notification area delimiter line

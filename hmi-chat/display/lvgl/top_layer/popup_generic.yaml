@@ -62,15 +62,12 @@ obj:
               widgets:
                 - button:
                     id: id_lv_popup_generic_action_button
+                    styles: style_popup_btn
                     flex_grow: 1
                     radius: 10
                     height: 100%
                     bg_color: color_red
                     bg_opa: COVER
-                    shadow_opa: COVER
-                    shadow_color: color_gray
-                    shadow_width: 6
-                    shadow_spread: 1
                     widgets:
                       - label:
                           id: id_lv_popup_generic_action_label
@@ -83,15 +80,12 @@ obj:
                         - script.execute: id_script_popup_action_execute
                 - button:
                     id: id_lv_popup_generic_cancel_button
+                    styles: style_popup_btn
                     flex_grow: 1
                     radius: 10
                     height: 100%
                     bg_color: color_gray
                     bg_opa: COVER
-                    shadow_opa: COVER
-                    shadow_color: color_gray
-                    shadow_width: 6
-                    shadow_spread: 1
                     widgets:
                       - label:
                           align: CENTER

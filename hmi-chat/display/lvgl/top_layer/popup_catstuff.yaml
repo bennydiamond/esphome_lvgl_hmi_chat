@@ -50,12 +50,9 @@ obj:
               text: "${i18n_notification_problem_text}"
           - button:
               id: id_lv_popup_catstuff_close
+              styles: style_popup_btn
               align: CENTER
               width: 100%
-              shadow_opa: COVER
-              shadow_color: color_gray
-              shadow_width: 6
-              shadow_spread: 1
               on_press:
                 then:
                   - lvgl.widget.hide: id_lv_popup_warnings_overlay

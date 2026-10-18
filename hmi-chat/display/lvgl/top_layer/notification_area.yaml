@@ -90,20 +90,14 @@ obj:
           widgets:
             - button:
                 id: id_lv_but_catstuff_problem
-                pad_all: 0
-                height: 35
-                width: 33
-                border_side: NONE
-                bg_opa: TRANSP
-                shadow_width: 0
+                styles: style_notif_button
                 hidden: True
                 widgets:
                 - label:
                     id: id_lv_lab_catstuff_problem
-                    align: CENTER
+                    styles: style_notif_icon
                     text: "${cat}"
                     text_color: color_red
-                    text_font: mdi_icons_32
                 on_short_click:
                     then:
                         - lvgl.widget.show: id_lv_popup_warnings_overlay
@@ -113,20 +107,14 @@ obj:
             # Fountain low water alert (button opens warnings overlay)
             - button:
                 id: id_lv_but_water_alert
-                pad_all: 0
-                height: 35
-                width: 33
-                border_side: NONE
-                bg_opa: TRANSP
-                shadow_width: 0
+                styles: style_notif_button
                 hidden: true
                 widgets:
                     - label:
                         id: id_lv_lab_water_alert
-                        align: CENTER
+                        styles: style_notif_icon
                         text: "${water_alert}"
                         text_color: color_red
-                        text_font: mdi_icons_32
                 on_short_click:
                     then:
                         - lvgl.widget.show: id_lv_popup_warnings_overlay
@@ -136,20 +124,14 @@ obj:
             # Feeder low food alert (button opens warnings overlay)
             - button:
                 id: id_lv_but_food_alert
-                pad_all: 0
-                height: 35
-                width: 33
-                border_side: NONE
-                bg_opa: TRANSP
-                shadow_width: 0
+                styles: style_notif_button
                 hidden: true
                 widgets:
                     - label:
                         id: id_lv_lab_food_alert
-                        align: CENTER
+                        styles: style_notif_icon
                         text: "${food_drumstick}"
                         text_color: color_orange
-                        text_font: mdi_icons_32
                 on_short_click:
                     then:
                         - lvgl.widget.show: id_lv_popup_warnings_overlay

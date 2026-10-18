@@ -27,6 +27,7 @@ obj:
           # Close button (top-right, red, with "X")
           - button:
               id: id_lv_popup_${f_id}_quantity_close
+              styles: style_popup_btn
               align: TOP_RIGHT
               width: 50
               height: 50
@@ -34,10 +35,6 @@ obj:
               radius: 9
               bg_color: color_red
               bg_opa: COVER
-              shadow_opa: COVER
-              shadow_color: color_gray
-              shadow_width: 6
-              shadow_spread: 1
               on_press:
                 then:
                   - lvgl.widget.hide: id_lv_popup_${f_id}_quantity_overlay
